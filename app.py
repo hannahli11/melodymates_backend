@@ -20,6 +20,17 @@ def get_hannah_data():
  # Return the list as JSON response
     return jsonify(InfoDb)
 
+# add an api endpoint to flask app
+@app.route('/api/carson')
+def get_carson_data():
+    InfoDb = []
+    InfoDb.append({
+        "FirstName": "Carson",
+        "LastName": "Sutherland",
+        "Username": "CJSuth$"
+    })
+    return jsonify(InfoDb)
+
 @app.route('/api/rhea')
 def get_rhea_data():
     # start a list, to be used like a information database

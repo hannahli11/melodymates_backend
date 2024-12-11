@@ -56,6 +56,18 @@ def get_brandon_data():
     })
     return jsonify(InfoDb)
 
+@app.route('/api/rowan')
+def get_brandon_data():
+    # start a list, to be used like a information database
+    InfoDb = []
+
+    # add a row to list, an Info record
+    InfoDb.append({
+        "FirstName": "Rowan",
+        "LastName": "Sutherland",
+        "Username": "rowangs.1"
+    })
+    return jsonify(InfoDb)
 # add an HTML endpoint to flask app
 @app.route('/')
 def say_hello():

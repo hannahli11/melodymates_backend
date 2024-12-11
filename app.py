@@ -19,6 +19,16 @@ def get_hannah_data():
     })
  # Return the list as JSON response
     return jsonify(InfoDb)
+@app.route('/api/gaheera')
+def get_gaheera_data():
+    InfoDb = []
+    InfoDb.append({
+        "FirstName": "Gaheera",
+        "LastName": "Babbar",
+        "Username": "gaheerab20"
+    })
+ # Return the list as JSON response
+    return jsonify(InfoDb)
 
 @app.route('/api/rhea')
 def get_rhea_data():

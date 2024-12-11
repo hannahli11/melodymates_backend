@@ -6,3 +6,4 @@ app = Flask(__name__)
 CORS(app, supports_credentials=True, origins='*')  # Allow all origins (*)
 
 # ... your existing Flask
+

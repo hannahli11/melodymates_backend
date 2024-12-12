@@ -1,23 +1,30 @@
-from flask import Blueprint
-from flask_restful import Api, Resource # used for REST API building
+from flask import Blueprint, jsonify
+from flask_restful import Api, Resource  # used for REST API building
 
-student_api = Blueprint('student_api', __name__,
-                   url_prefix='/api')
+student_api = Blueprint('student_api', __name__, url_prefix='/api')
 
 # API docs https://flask-restful.readthedocs.io/en/latest/
 api = Api(student_api)
 
-class StudentAPI:        
-    class _John(Resource): 
-        def get(self):
-           # implement the get method 
-           pass
+class StudentAPI:
+    @staticmethod
+    def get_student(name):
+        students = {
+            "Hannah": {
+                "name": "Hannah",
+                "age": 15,
+                "username": "hannahli_11",
+                "favorite artists": "Gracie Abrams, Don Toliver, Ariana Grande",
+            }
+        }
+        return students.get(name)
     
-    class _Jeff(Resource): 
-        def get(self):
-           # implement the get method 
-           pass
+class HannahResource(Resource): 
+    def get(self):
+        student = StudentAPI.get_student("Hannah")
+        if student:
+            return jsonify(student)
+        return {"Data not found"}, 404
 
-    # building RESTapi endpoint
-    api.add_resource(_John, '/student/john')          
-    api.add_resource(_Jeff, '/student/jeff')
+# Building REST API endpoint
+api.add_resource(HannahResource, '/student/hannah')

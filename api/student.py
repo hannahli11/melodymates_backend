@@ -11,11 +11,23 @@ class StudentAPI:
     def get_student(name):
         students = {
             "Hannah": {
-                "name": "Hannah",
-                "age": 15,
+                "first name": "Hannah",
+                "last name": "Li",
                 "username": "hannahli_11",
                 "favorite artists": "Gracie Abrams, Don Toliver, Ariana Grande",
-            }
+            },
+            "Rhea": {
+                "first name": "Rhea",
+                "last name": "Rajeshakhar",
+                "username": "rhear_02",
+                "favorite artists": "The Weeknd, Don Toliver, Metro Boomin",
+            },
+            "Gaheera": {
+                "first name": "Gaheera",
+                "last name": "Babbar",
+                "username": "gaheerb",
+                "favorite artists": "Future, Don Toliver, Travis Scott",
+            },
         }
         return students.get(name)
     
@@ -25,6 +37,20 @@ class HannahResource(Resource):
         if student:
             return jsonify(student)
         return {"Data not found"}, 404
+class RheaResource(Resource): 
+    def get(self):
+        student = StudentAPI.get_student("Rhea")
+        if student:
+            return jsonify(student)
+        return {"Data not found"}, 404
+class GaheeraResource(Resource): 
+    def get(self):
+        student = StudentAPI.get_student("Gaheera")
+        if student:
+            return jsonify(student)
+        return {"Data not found"}, 404
 
 # Building REST API endpoint
 api.add_resource(HannahResource, '/student/hannah')
+api.add_resource(RheaResource, '/student/rhea')
+api.add_resource(GaheeraResource, '/student/gaheera')

@@ -32,7 +32,7 @@ class StudentAPI:
                 "first name": "Carson",
                 "last name": "Sutherland",
                 "username": "carsonsuth17",
-                "favorite artists": "Brent Faiyaz, Radiohead, Kanye,
+                "favorite artists": "Brent Faiyaz, Radiohead, Drake",
             },
             "Rowan": {
                 "first name": "Rowan",
@@ -61,6 +61,12 @@ class RheaResource(Resource):
         if student:
             return jsonify(student)
         return {"Data not found"}, 404
+class RowanResource(Resource): 
+    def get(self):
+        student = StudentAPI.get_student("Rowan")
+        if student:
+            return jsonify(student)
+        return {"Data not found"}, 404
 class GaheeraResource(Resource): 
     def get(self):
         student = StudentAPI.get_student("Gaheera")
@@ -69,7 +75,13 @@ class GaheeraResource(Resource):
         return {"Data not found"}, 404
 class BrandonResource(Resource): 
     def get(self):
-        student = StudentAPI.get_student("Brandonn")
+        student = StudentAPI.get_student("Brandon")
+        if student:
+            return jsonify(student)
+        return {"Data not found"}, 404
+class CarsonResource(Resource): 
+    def get(self):
+        student = StudentAPI.get_student("Carson")
         if student:
             return jsonify(student)
         return {"Data not found"}, 404
@@ -77,3 +89,6 @@ class BrandonResource(Resource):
 api.add_resource(HannahResource, '/student/hannah')
 api.add_resource(RheaResource, '/student/rhea')
 api.add_resource(GaheeraResource, '/student/gaheera')
+api.add_resource(RowanResource, '/student/rowan')
+api.add_resource(CarsonResource, '/student/carson')
+api.add_resource(BrandonResource, '/student/brandon')

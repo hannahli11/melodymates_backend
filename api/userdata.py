@@ -1,11 +1,17 @@
-from flask import Flask, jsonify, Blueprint
-from flask_restful import Api
+import sqlite3
 
-userdata_api = Blueprint('userdata_api', __name__,
-                   url_prefix='/api')
+def init_db():
+    conn = sqlite3.connect('preferences.db')
+    c = conn.cursor()
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS UserPreferences (
+            id INTEGER PRIMARY KEY,
+            question_id INTEGER NOT NULL,
+            answer TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
-# API docs https://flask-restful.readthedocs.io/en/latest/
-api = Api(userdata_api)
-
-app = Flask(__name__)
-
+if __name__ == '__main__':
+    init_db()

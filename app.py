@@ -57,7 +57,7 @@ def get_brandon_data():
     return jsonify(InfoDb)
 
 @app.route('/api/rowan')
-def get_brandon_data():
+def get_rowan_data():
     # start a list, to be used like a information database
     InfoDb = []
 

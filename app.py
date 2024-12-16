@@ -30,6 +30,17 @@ def get_gaheera_data():
  # Return the list as JSON response
     return jsonify(InfoDb)
 
+# add an api endpoint to flask app
+@app.route('/api/carson')
+def get_carson_data():
+    InfoDb = []
+    InfoDb.append({
+        "FirstName": "Carson",
+        "LastName": "Sutherland",
+        "Username": "CJSuth$"
+    })
+    return jsonify(InfoDb)
+
 @app.route('/api/rhea')
 def get_rhea_data():
     # start a list, to be used like a information database
@@ -55,6 +66,18 @@ def get_brandon_data():
     })
     return jsonify(InfoDb)
 
+@app.route('/api/rowan')
+def get_rowan_data():
+    # start a list, to be used like a information database
+    InfoDb = []
+
+    # add a row to list, an Info record
+    InfoDb.append({
+        "FirstName": "Rowan",
+        "LastName": "Sutherland",
+        "Username": "rowangs.1"
+    })
+    return jsonify(InfoDb)
 # add an HTML endpoint to flask app
 @app.route('/')
 def say_hello():

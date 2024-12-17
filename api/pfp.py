@@ -23,7 +23,7 @@ class _PFP(Resource):
 
     Returns:
     - A JSON object containing the base64 encoded string of the profile picture under the key 'pfp' if the operation is successful.
-    - HTTP status code 200 if the profile picture is successfully retrieved.
+    - HTTP statuas code 200 if the profile picture is successfully retrieved.
     - HTTP status code 404 if the profile picture is not set for the current user.
     - HTTP status code 500 if an error occurs while reading the profile picture from the server.
     """

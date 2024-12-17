@@ -10,7 +10,7 @@ api = Api(student_api)
 
 
 class StudentAPI:
-    # @app.route('/api/student/name')
+    # @app.route('/api/student/name')main
     def get_student(name):
         students = {
             "Hannah": {

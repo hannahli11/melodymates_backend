@@ -1,74 +1,71 @@
-import json
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from flask import Flask, jsonify, request
+from flask_cors import CORS
 
-# In-memory storage for users and messages
-users = set()  # Store registered users dynamically as a set
-messages = {}  # Store messages by chat key
+# Initialize a Flask application
+app = Flask(__name__)
+CORS(app, supports_credentials=True, origins='*')  # Allow all origins (*)
 
-class ChatHandler(BaseHTTPRequestHandler):
-    def _set_headers(self, content_type="application/json"):
-        self.send_response(200)
-        self.send_header("Content-Type", content_type)
-        self.end_headers()
+# In-memory database for user information
+InfoDb = [
+    {"FirstName": "Hannah", "LastName": "Li", "Username": "Hannahli_11"},
+    {"FirstName": "Carson", "LastName": "Sutherland", "Username": "CJSuth$"},
+    {"FirstName": "Rhea", "LastName": "Rajashekhar", "Username": "rhear$"},
+    {"FirstName": "Brandon", "LastName": "Smurlo", "Username": "bsmurlo"},
+    {"FirstName": "Rowan", "LastName": "Sutherland", "Username": "rowangs.1"}
+]
 
-    def do_GET(self):
-        if self.path == "/users":
-            self._set_headers()
-            self.wfile.write(json.dumps(list(users)).encode("utf-8"))
-        elif self.path.startswith("/messages"):
-            self._set_headers()
-            chat_key = self.path.split("/")[-1]
-            self.wfile.write(json.dumps(messages.get(chat_key, [])).encode("utf-8"))
-        else:
-            self.send_error(404, "Endpoint not found")
+# API endpoint to fetch all users
+@app.route('/api/users', methods=['GET'])
+def get_all_users():
+    return jsonify(InfoDb)
 
-    def do_POST(self):
-        if self.path == "/register":
-            content_length = int(self.headers.get("Content-Length", 0))
-            post_data = json.loads(self.rfile.read(content_length))
+# API endpoint to fetch a user by their username
+@app.route('/api/user/<username>', methods=['GET'])
+def get_user_by_username(username):
+    user = next((u for u in InfoDb if u["Username"] == username), None)
+    if user:
+        return jsonify(user)
+    return jsonify({"error": "User not found"}), 404
 
-            username = post_data.get("username")
-            if username and username not in users:
-                users.add(username)
-                self._set_headers()
-                self.wfile.write(json.dumps({"status": "User registered", "username": username}).encode("utf-8"))
-            else:
-                self.send_error(400, "Invalid or duplicate username")
+# API endpoint to add a new user
+@app.route('/api/user', methods=['POST'])
+def add_user():
+    data = request.json
+    if not data or "FirstName" not in data or "LastName" not in data or "Username" not in data:
+        return jsonify({"error": "Invalid input"}), 400
 
-        elif self.path == "/send":
-            content_length = int(self.headers.get("Content-Length", 0))
-            post_data = json.loads(self.rfile.read(content_length))
+    # Check for duplicates
+    if any(u["Username"] == data["Username"] for u in InfoDb):
+        return jsonify({"error": "Username already exists"}), 409
 
-            sender = post_data.get("sender")
-            receiver = post_data.get("receiver")
-            message = post_data.get("message")
+    InfoDb.append({
+        "FirstName": data["FirstName"],
+        "LastName": data["LastName"],
+        "Username": data["Username"]
+    })
+    return jsonify({"message": "User added successfully"}), 201
 
-            if sender and receiver and message:
-                if sender not in users or receiver not in users:
-                    self.send_error(400, "Sender or receiver not registered")
-                    return
+# HTML root endpoint
+@app.route('/')
+def say_hello():
+    html_content = """
+    <html>
+    <head>
+        <title>Chat Backend</title>
+    </head>
+    <body>
+        <h2>Welcome to the Chat Backend API!</h2>
+        <p>Endpoints:</p>
+        <ul>
+            <li>/api/users - GET all users</li>
+            <li>/api/user/&lt;username&gt; - GET user by username</li>
+            <li>/api/user - POST to add a new user</li>
+        </ul>
+    </body>
+    </html>
+    """
+    return html_content
 
-                chat_key = "-".join(sorted([sender, receiver]))
-
-                # Censor bad words
-                bad_words = ["fuck", "shit", "bitch", "asshole", "ass"]
-                for word in bad_words:
-                    message = message.replace(word, "****")
-
-                if chat_key not in messages:
-                    messages[chat_key] = []
-                messages[chat_key].append(f"{sender}: {message}")
-
-                self._set_headers()
-                self.wfile.write(json.dumps({"status": "Message sent", "chatKey": chat_key}).encode("utf-8"))
-            else:
-                self.send_error(400, "Invalid message data")
-
-        else:
-            self.send_error(404, "Endpoint not found")
-
-if __name__ == "__main__":
-    server_address = ("", 8000)
-    httpd = HTTPServer(server_address, ChatHandler)
-    print("Server running on port 8000...")
-    httpd.serve_forever()
+if __name__ == '__main__':
+    # Start Flask server on http://127.0.0.1:5001
+    app.run(port=5001)

@@ -17,36 +17,42 @@ class StudentAPI:
                 "Firstname": "Hannah",
                 "Lastname": "Li",
                 "Username": "hannahli_11",
+                "Password": "rT$4vN8@qL3w!ZxP",
                 "FavoriteArtists": "Gracie Abrams, Don Toliver, Ariana Grande",
             },
             "Rhea": {
                 "Firstname": "Rhea",
                 "Lastname": "Rajeshakhar",
                 "Username": "rhear_02",
+                "Password": "yM#7hX2%fJ5k!C9a",
                 "FavoriteArtists": "The Weeknd, Don Toliver, Metro Boomin",
             },
             "Gaheera": {
                 "Firstname": "Gaheera",
                 "Lastname": "Babbar",
                 "Username": "gaheerb",
+                "Password": "tG@9pR1*Lz5x$Q3m",
                 "FavoriteArtists": "Future, Don Toliver, Travis Scott",
             },
             "Carson": {
                 "Firstname": "Carson",
                 "Lastname": "Sutherland",
                 "Username": "carsonsuth17",
+                "Password": "vH!6yP3#nZ2q@X5f",
                 "FavoriteArtists": "Brent Faiyaz, Radiohead, Drake",
             },
             "Rowan": {
                 "Firstname": "Rowan",
                 "Lastname": "Sutherland",
                 "Username": "rowangs",
+                "Password": "mA$2hN1@tX7p#Q9k",
                 "FavoriteArtists": "Hozier,  Imogen Heap, Big Theif",
             },
              "Brandon": {
                 "Firstname": "Brandon",
                 "Lastname": "Smurlo",
                 "Username": "bsmurlo",
+                "Password": "yL!3vG7#qN2x@P5m",
                 "FavoriteArtists": "T-dre, Bryson Tiller, Bob Marley",
             }
         }

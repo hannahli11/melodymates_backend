@@ -2,16 +2,19 @@ import jwt
 from flask import Blueprint, request, jsonify, current_app, Response, g
 from flask_restful import Api, Resource  # used for REST API building
 from datetime import datetime
-from __init__ import app 
+from __init__ import app
 from api.jwt_authorize import token_required
 from model.user import User
+
 
 # Create a Blueprint for the user API
 user_api = Blueprint('user_api', __name__, url_prefix='/api')
 
+
 # Create an Api object and associate it with the Blueprint
 # API docs: https://flask-restful.readthedocs.io/en/latest/api.html
 api = Api(user_api)
+
 
 class UserAPI:
     """
@@ -22,24 +25,30 @@ class UserAPI:
         Users API operation for bulk Create and Read.
         """
 
+
         def post(self):
             """
             Handle bulk user creation by sending POST requests to the single user endpoint.
             """
             users = request.get_json()
 
+
             if not isinstance(users, list):
                 return {'message': 'Expected a list of user data'}, 400
 
+
             results = {'errors': [], 'success_count': 0, 'error_count': 0}
+
 
             with current_app.test_client() as client:
                 for user in users:
                     # Set a default password as we don't have it for bulk creation
                     user["password"] = app.config['DEFAULT_PASSWORD']
 
+
                     # Simulate a POST request to the single user creation endpoint
                     response = client.post('/api/user', json=user)
+
 
                     if response.status_code == 200:
                         results['success_count'] += 1
@@ -47,8 +56,9 @@ class UserAPI:
                         results['errors'].append(response.get_json())
                         results['error_count'] += 1
 
+
             return jsonify(results)
-        
+       
         @token_required()
         def get(self):
             """
@@ -56,6 +66,7 @@ class UserAPI:
             """
             current_user = g.current_user
             users = User.query.all()  # extract all users from the database
+
 
             # Prepare a JSON list of user dictionaries
             json_ready = []
@@ -67,12 +78,15 @@ class UserAPI:
                     user_data['access'] = ['ro']  # read-only access control
                 json_ready.append(user_data)
 
+
             return jsonify(json_ready)
+
 
     class _CRUD(Resource):
         """
         Users API operation for Create, Read, Update, Delete.
         """
+
 
         def post(self):
             """
@@ -80,26 +94,31 @@ class UserAPI:
             """
             body = request.get_json()
 
+
             # Validate name
             name = body.get('name')
             if name is None or len(name) < 2:
                 return {'message': 'Name is missing, or is less than 2 characters'}, 400
+
 
             # Validate uid
             uid = body.get('uid')
             if uid is None or len(uid) < 2:
                 return {'message': 'User ID is missing, or is less than 2 characters'}, 400
 
+
             # Setup minimal USER OBJECT
             user_obj = User(name=name, uid=uid)
+
 
             # Add user to database
             user = user_obj.create(body)  # pass the body elements to be saved in the database
             if not user:  # failure returns error message
                 return {'message': f'Processed {name}, either a format error or User ID {uid} is duplicate'}, 400
 
+
             return jsonify(user.read())
-        
+       
         @token_required()
         def get(self):
             """
@@ -109,6 +128,7 @@ class UserAPI:
             user_data = user.read()
             return jsonify(user_data)
 
+
         @token_required()
         def put(self):
             """
@@ -116,6 +136,7 @@ class UserAPI:
             """
             current_user = g.current_user
             body = request.get_json()
+
 
             # Admin-specific update handling
             if current_user.role == 'Admin':
@@ -129,10 +150,13 @@ class UserAPI:
             else:
                 user = current_user  # Non-admin can only update themselves
 
+
             # Update the user object with the new data
             user.update(body)
 
+
             return jsonify(user.read())
+
 
         @token_required("Admin")
         def delete(self):
@@ -148,10 +172,12 @@ class UserAPI:
             user.delete()
             return f"Deleted user: {json}", 204  # use 200 to test with Postman
 
+
     class _Security(Resource):
         """
         Security-related API operations.
         """
+
 
         def post(self):
             """
@@ -166,6 +192,7 @@ class UserAPI:
                         "error": "Bad request"
                     }, 400
 
+
                 # Get Data
                 uid = body.get('uid')
                 if uid is None:
@@ -174,11 +201,14 @@ class UserAPI:
                 if not password:
                     return {'message': 'Password is missing'}, 401
 
+
                 # Find user
                 user = User.query.filter_by(_uid=uid).first()
 
+
                 if user is None or not user.is_password(password):
                     return {'message': "Invalid user id or password"}, 401
+
 
                 # Generate token
                 token = jwt.encode(
@@ -203,6 +233,7 @@ class UserAPI:
                     "message": str(e)
                 }, 500
 
+
         @token_required()
         def delete(self):
             """
@@ -216,6 +247,7 @@ class UserAPI:
                     current_app.config["SECRET_KEY"],
                     algorithm="HS256"
                 )
+
 
                 # Prepare a response indicating the token has been invalidated
                 resp = Response("Token invalidated successfully")
@@ -242,8 +274,10 @@ class UserAPI:
             ''' Return the current user as a json object '''
             return jsonify(current_user.read())
 
+
 # Register the API resources with the Blueprint
 api.add_resource(UserAPI._ID, '/id')
 api.add_resource(UserAPI._BULK_CRUD, '/users')
 api.add_resource(UserAPI._CRUD, '/user')
 api.add_resource(UserAPI._Security, '/authenticate')
+

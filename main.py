@@ -62,6 +62,9 @@ app.register_blueprint(vote_api)
 app.register_blueprint(car_api)
 app.register_blueprint(student_api)
 app.register_blueprint(artrec_api)
+app.register_blueprint(profilematching_api)
+app.register_blueprint(musicChat_api)
+app.register_blueprint(information_api)
 
 # Tell Flask-Login the view function name of your login route
 login_manager.login_view = "login"

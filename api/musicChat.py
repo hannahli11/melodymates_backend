@@ -191,9 +191,9 @@ class CarsonResource(Resource):
       
 # Building REST API endpoint
 api.add_resource(HannahResource, '/chat/Hannah')
-api.add_resource(RheaResource, '/user/Rhea')
-api.add_resource(GaheeraResource, '/user/Gaheera')
-api.add_resource(RowanResource, '/user/Rowan')
-api.add_resource(CarsonResource, '/user/Carson')
-api.add_resource(BrandonResource, '/user/Brandon')
+api.add_resource(RheaResource, '/chat/Rhea')
+api.add_resource(GaheeraResource, '/chat/Gaheera')
+api.add_resource(RowanResource, '/chat/Rowan')
+api.add_resource(CarsonResource, '/chat/Carson')
+api.add_resource(BrandonResource, '/chat/Brandon')
 

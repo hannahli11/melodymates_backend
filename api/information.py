@@ -106,9 +106,9 @@ class CarsonResource(Resource):
         return {"Data not found"}, 404
       
 # Building REST API endpoint
-api.add_resource(HannahResource, '/user/Hannah')
-api.add_resource(RheaResource, '/user/Rhea')
-api.add_resource(GaheeraResource, '/user/Gaheera')
-api.add_resource(RowanResource, '/user/Rowan')
-api.add_resource(CarsonResource, '/user/Carson')
-api.add_resource(BrandonResource, '/user/Brandon')
+api.add_resource(HannahResource, '/data/Hannah')
+api.add_resource(RheaResource, '/data/Rhea')
+api.add_resource(GaheeraResource, '/data/Gaheera')
+api.add_resource(RowanResource, '/data/Rowan')
+api.add_resource(CarsonResource, '/data/Carson')
+api.add_resource(BrandonResource, '/data/Brandon')

@@ -16,15 +16,15 @@ class InformationAPI:
             "Hannah": {
                 "ArtistPref": "Taylor Swift",
                 "Method": "Spotify",
-                "NewMusic": "Friends/Family"
-                "HowOften": "Several times a month",
+                "NewMusic": "Friends/Family",
+                "HowOften": "Several times a week",
                 "Era": "1980's",
                 "FavoriteAspect": "Vocals"
             },
             "Rhea": {
                 "ArtistPref": "SZA",
                 "Method": "Spotify",
-                "NewMusic": "Social Media"
+                "NewMusic": "Social Media",
                 "HowOften": "Several times a week",
                 "Era": "2010's",
                 "FavoriteAspect": "Beat"
@@ -32,7 +32,7 @@ class InformationAPI:
             "Gaheera": {
                 "ArtistPref": "Taylor Swift",
                 "Method": "Spotify",
-                "NewMusic": "Radio"
+                "NewMusic": "Radio",
                 "HowOften": "Every day",
                 "Era": "2000's",
                 "FavoriteAspect": "Vocals"
@@ -40,7 +40,7 @@ class InformationAPI:
             "Carson": {
                 "ArtistPref": "Frank Ocean",
                 "Method": "Spotify",
-                "NewMusic": "Social Media"
+                "NewMusic": "Social Media",
                 "HowOften": "Everyday",
                 "Era": "Modern",
                 "FavoriteAspect": "Rhythm"
@@ -48,7 +48,7 @@ class InformationAPI:
             "Rowan": {
                 "ArtistPref": "Taylor Swift",
                 "Method": "Spotify",
-                "NewMusic": "Music blogs"
+                "NewMusic": "Music blogs",
                 "HowOften": "Everyday",
                 "Era": "1990's",
                 "FavoriteAspect": "Vocals"
@@ -56,7 +56,7 @@ class InformationAPI:
              "Brandon": {
                 "ArtistPref": "Travis Scott",
                 "Method": "Spotify",
-                "NewMusic": "Social media"
+                "NewMusic": "Social media",
                 "HowOften": "Several times a week",
                 "Era": "2000's",
                 "FavoriteAspect": "Beat"
@@ -66,41 +66,41 @@ class InformationAPI:
     
 class HannahResource(Resource): 
     def get(self):
-        user = ArtrecAPI.get_user("Hannah")
+        user = InformationAPI.get_user("Hannah")
         if user:
             return jsonify(user)
         return {"Data not found"}, 404
     
 class RheaResource(Resource): 
      def get(self):
-        user = ArtrecAPI.get_user("Rhea")
+        user = InformationAPI.get_user("Rhea")
         if user:
             return jsonify(user)
         return {"Data not found"}, 404
     
 class RowanResource(Resource): 
       def get(self):
-        user = ArtrecAPI.get_user("Rowan")
+        user = InformationAPI.get_user("Rowan")
         if user:
             return jsonify(user)
         return {"Data not found"}, 404
     
 class GaheeraResource(Resource): 
       def get(self):
-        user = ArtrecAPI.get_user("Gaheera")
+        user = InformationAPI.get_user("Gaheera")
         if user:
             return jsonify(user)
         return {"Data not found"}, 404
 class BrandonResource(Resource): 
       def get(self):
-        user = ArtrecAPI.get_user("Brandon")
+        user = InformationAPI.get_user("Brandon")
         if user:
             return jsonify(user)
         return {"Data not found"}, 404
     
 class CarsonResource(Resource): 
       def get(self):
-        user = ArtrecAPI.get_user("Carson")
+        user = InformationAPI.get_user("Carson")
         if user:
             return jsonify(user)
         return {"Data not found"}, 404

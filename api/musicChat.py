@@ -103,3 +103,97 @@ def say_hello():
 if __name__ == '__main__':
     # Start Flask server on http://127.0.0.1:5001
     app.run(port=5001)
+
+musicChat_api = Blueprint('musicChat_api', __name__, url_prefix='/api')
+app = Flask(__name__)
+CORS(app, supports_credentials=True, origins='*')  
+# API docs https://flask-restful.readthedocs.io/en/latest/
+api = Api(musicChat_api)
+
+
+class musicChatAPI:
+   # @app.route('/api/student/')
+    def get_user(name):
+        users = {
+            "Hannah": {
+                "Username": "hannahli_11",
+                "MessageStatus": "delivered",
+                "TimeStamp": "11:33"
+            },
+            "Rhea": {
+                "Username": "rhear_02",
+                "MessageStatus": "sent",
+                "TimeStamp": "3:21"
+            },
+            "Gaheera": {
+                "Username": "gaheerb",
+                "MessageStatus": "read",
+                "TimeStamp": "8:40"
+            },
+            "Carson": {
+                "Username": "carsonsuth17",
+                "MessageStatus": "delivered",
+                "TimeStamp" : "6:05"
+            },
+            "Rowan": {
+                "Username": "rowangs",
+                "MessageStatus" : "sent",
+                "TimeStamp" : "4:58",
+            },
+             "Brandon": {
+                "Username": "bsmurlo",
+                "MessageStatus" : "read",
+                "TimeStamp" : "11:11"
+            }
+        }
+        return users[name]
+    
+class HannahResource(Resource): 
+    def get(self):
+        user = musicChatAPI.get_user("Hannah")
+        if user:
+            return jsonify(user)
+        return {"Data not found"}, 404
+    
+class RheaResource(Resource): 
+     def get(self):
+        user = musicChatAPI.get_user("Rhea")
+        if user:
+            return jsonify(user)
+        return {"Data not found"}, 404
+    
+class RowanResource(Resource): 
+      def get(self):
+        user = musicChatAPI.get_user("Rowan")
+        if user:
+            return jsonify(user)
+        return {"Data not found"}, 404
+    
+class GaheeraResource(Resource): 
+      def get(self):
+        user = musicChatAPI.get_user("Gaheera")
+        if user:
+            return jsonify(user)
+        return {"Data not found"}, 404
+class BrandonResource(Resource): 
+      def get(self):
+        user = musicChatAPI.get_user("Brandon")
+        if user:
+            return jsonify(user)
+        return {"Data not found"}, 404
+    
+class CarsonResource(Resource): 
+      def get(self):
+        user = musicChatAPI.get_user("Carson")
+        if user:
+            return jsonify(user)
+        return {"Data not found"}, 404
+      
+# Building REST API endpoint
+api.add_resource(HannahResource, '/user/Hannah')
+api.add_resource(RheaResource, '/user/Rhea')
+api.add_resource(GaheeraResource, '/user/Gaheera')
+api.add_resource(RowanResource, '/user/Rowan')
+api.add_resource(CarsonResource, '/user/Carson')
+api.add_resource(BrandonResource, '/user/Brandon')
+

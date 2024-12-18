@@ -62,6 +62,7 @@ app.register_blueprint(vote_api)
 app.register_blueprint(car_api)
 app.register_blueprint(student_api)
 app.register_blueprint(artrec_api)
+app.register_blueprint(profilematching_api)
 app.register_blueprint(information_api)
 app.register_blueprint(musicChat_api)
 

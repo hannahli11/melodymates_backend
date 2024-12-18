@@ -18,6 +18,8 @@ students = {
         "Username": "hannahli_11",
         "Password": "rT$4vN8@qL3w!ZxP",
         "FavoriteArtists": "Gracie Abrams, Don Toliver, Ariana Grande",
+        "Bio": "Music enthusiast and aspiring songwriter.",
+        "ProfilePicture": "https://example.com/hannah_profile.jpg",
     },
     "Rhea": {
         "Firstname": "Rhea",
@@ -25,34 +27,8 @@ students = {
         "Username": "rhear_02",
         "Password": "yM#7hX2%fJ5k!C9a",
         "FavoriteArtists": "The Weeknd, Don Toliver, Metro Boomin",
-    },
-    "Gaheera": {
-        "Firstname": "Gaheera",
-        "Lastname": "Babbar",
-        "Username": "gaheerb",
-        "Password": "tG@9pR1*Lz5x$Q3m",
-        "FavoriteArtists": "Future, Don Toliver, Travis Scott",
-    },
-    "Carson": {
-        "Firstname": "Carson",
-        "Lastname": "Sutherland",
-        "Username": "carsonsuth17",
-        "Password": "vH!6yP3#nZ2q@X5f",
-        "FavoriteArtists": "Brent Faiyaz, Radiohead, Drake",
-    },
-    "Rowan": {
-        "Firstname": "Rowan",
-        "Lastname": "Sutherland",
-        "Username": "rowangs",
-        "Password": "mA$2hN1@tX7p#Q9k",
-        "FavoriteArtists": "Hozier, Imogen Heap, Big Thief",
-    },
-    "Brandon": {
-        "Firstname": "Brandon",
-        "Lastname": "Smurlo",
-        "Username": "bsmurlo",
-        "Password": "yL!3vG7#qN2x@P5m",
-        "FavoriteArtists": "T-dre, Bryson Tiller, Bob Marley",
+        "Bio": "Future producer and music lover.",
+        "ProfilePicture": "https://example.com/rhea_profile.jpg",
     },
 }
 
@@ -63,7 +39,7 @@ class StudentAPI:
         return students.get(name, None)
 
     @staticmethod
-    def put_student(firstname, lastname, username, password, favorite_artists):
+    def put_student(firstname, lastname, username, password, favorite_artists, bio, profile_picture):
         temp_student = {
             firstname: {
                 "Firstname": firstname,
@@ -71,6 +47,8 @@ class StudentAPI:
                 "Username": username,
                 "Password": password,
                 "FavoriteArtists": favorite_artists,
+                "Bio": bio,
+                "ProfilePicture": profile_picture,
             }
         }
         students[firstname] = temp_student[firstname]
@@ -85,24 +63,39 @@ class StudentResource(Resource):
             return jsonify(student)
         return {"error": "Student not found"}, 404
 
+
+class AddStudentResource(Resource):
     def post(self):
-        data = request.get_json()
-        required_fields = ["Firstname", "Lastname", "Username", "Password", "FavoriteArtists"]
-        if all(field in data for field in required_fields):
-            new_student = StudentAPI.put_student(
-                data["Firstname"],
-                data["Lastname"],
-                data["Username"],
-                data["Password"],
-                data["FavoriteArtists"],
-            )
-            return jsonify(new_student)
-        return {"error": "Missing fields in request"}, 400
+        # Extract data from request headers
+        firstname = request.headers.get("Firstname")
+        lastname = request.headers.get("Lastname")
+        username = request.headers.get("Username")
+        password = request.headers.get("Password")
+        favorite_artists = request.headers.get("FavoriteArtists")
+        bio = request.headers.get("Bio")
+        profile_picture = request.headers.get("ProfilePicture")
+
+        # Validate required fields
+        if not all([firstname, lastname, username, password, favorite_artists, bio, profile_picture]):
+            return {"error": "Missing required fields in headers"}, 400
+
+        # Add new student to the dictionary
+        students[firstname] = {
+            "Firstname": firstname,
+            "Lastname": lastname,
+            "Username": username,
+            "Password": password,
+            "FavoriteArtists": favorite_artists,
+            "Bio": bio,
+            "ProfilePicture": profile_picture,
+        }
+
+        return students[firstname], 201  # Return the new student and HTTP 201 status
 
 
 # Add resources to the API
-api.add_resource(StudentResource, '/student/<string:name>')  # GET specific student
-api.add_resource(StudentResource, '/student')  # POST new student
+api.add_resource(StudentResource, '/student/<string:name>', endpoint='get_student')  # GET specific student
+api.add_resource(AddStudentResource, '/student', endpoint='add_student')  # POST new student
 
 # Register Blueprint with Flask app
 app.register_blueprint(student_api)

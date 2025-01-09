@@ -2,12 +2,12 @@ from sqlite3 import IntegrityError
 from __init__ import app, db
 from model.user import User
 
-class MusicChat(db.Model):
+class MusicChat(db.Model): # defiintion for data table 
     __tablename__ = 'musicChats'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    _message = db.Column(db.String(255), nullable=False)
-    _user_id = db.Column('user_id', db.Integer, db.ForeignKey('users.id'))
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True) # parameter 1
+    _message = db.Column(db.String(255), nullable=False) #parameter 2
+    _user_id = db.Column('user_id', db.Integer, db.ForeignKey('users.id')) # pearameter 3
 
     def __init__(self, message, user_id):
         """

@@ -27,12 +27,12 @@ def send_message(): # function to send messages is defined
     chat_id = len(chats) + 1  
     chats[chat_id] = {"message": message, "user_id": user_id}
 
-    return jsonify({"message": "Message sent successfully", "chat_id": chat_id}), 200
+    return jsonify({"message": "Message sent successfully", "chat_id": chat_id}), 200 # success message
 
 
 # API endpoint to get a chat message by ID
-@musicChat_api.route('/chat/<int:chat_id>', methods=['GET'])
-def get_chat(chat_id):
+@musicChat_api.route('/chat/<int:chat_id>', methods=['GET']) # endpoint to get certain messages to get id
+def get_chat(chat_id): # function definiotn 
     chat = chats.get(chat_id)
     if not chat:
         return jsonify({"message": "Chat not found"}), 404
@@ -40,7 +40,7 @@ def get_chat(chat_id):
     return jsonify({"chat_id": chat_id, "message": chat["message"], "user_id": chat["user_id"]}), 200
 
 # API endpoint to fetch all messages
-@musicChat_api.route('/chat', methods=['GET'])
+@musicChat_api.route('/chat', methods=['GET']) # to fetch all messages not just specific ones
 def get_all_chats():
     return jsonify(chats), 200
 

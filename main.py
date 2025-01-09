@@ -28,6 +28,7 @@ from api.messages_api import messages_api # Adi added this, messages for his web
 from api.carphoto import car_api
 from api.carChat import car_chat_api
 from api.student import student_api
+from api.usermatching import usermatching_api
 from api.artrec import artrec_api
 from api.musicChat import musicChat_api
 from api.profilematching import profilematching_api

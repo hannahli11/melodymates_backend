@@ -2,7 +2,9 @@ from flask import Blueprint, jsonify
 from flask_restful import Api, Resource # used for REST API building
 information_api = Blueprint('information_api', __name__, url_prefix='/api')
 # API docs https://flask-restful.readthedocs.io/en/latest/
-api = Api(information_api)
+api = Api(information_api) # Connect the API to the Blueprint
+
+#Static data for group members stored here
 class InformationAPI:
     def get_user(name):
         users = {
@@ -56,6 +58,7 @@ class InformationAPI:
             }
             }
         return users[name]
+    # Try to get the student data by name, or return None if not found return "Data not found"
 class HannahResource(Resource):
     def get(self):
         user = InformationAPI.get_user("Hannah")
@@ -92,7 +95,7 @@ class CarsonResource(Resource):
         if user:
             return jsonify(user)
         return {"Data not found"}, 404
-# Building REST API endpoint
+# Add routes for each student. The URL will map to the right resource.
 api.add_resource(HannahResource, '/data/Hannah')
 api.add_resource(RheaResource, '/data/Rhea')
 api.add_resource(GaheeraResource, '/data/Gaheera')

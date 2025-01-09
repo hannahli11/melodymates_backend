@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify
 from flask_restful import Api, Resource # used for REST API building
-from __init__ import app
 information_api = Blueprint('information_api', __name__, url_prefix='/api')
 # API docs https://flask-restful.readthedocs.io/en/latest/
 api = Api(information_api)

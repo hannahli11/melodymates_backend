@@ -1,19 +1,13 @@
-from flask import Blueprint, jsonify, Flask
+from flask import Blueprint, jsonify
 from flask_restful import Api, Resource # used for REST API building
-from flask_cors import CORS 
-
-
+from __init__ import app
 information_api = Blueprint('information_api', __name__, url_prefix='/api')
-app = Flask(__name__)
-CORS(app, supports_credentials=True, origins='*')  
 # API docs https://flask-restful.readthedocs.io/en/latest/
 api = Api(information_api)
-
 class InformationAPI:
-   # @app.route('/api/information/')
     def get_user(name):
         users = {
-            "Hannah": {
+             "Hannah": {
                 "ArtistPref": "Taylor Swift",
                 "Method": "Spotify",
                 "NewMusic": "Friends/Family",
@@ -61,50 +55,44 @@ class InformationAPI:
                 "Era": "2000's",
                 "FavoriteAspect": "Beat"
             }
-        }
+            }
         return users[name]
-    
-class HannahResource(Resource): 
+class HannahResource(Resource):
     def get(self):
         user = InformationAPI.get_user("Hannah")
         if user:
             return jsonify(user)
         return {"Data not found"}, 404
-    
-class RheaResource(Resource): 
+class RheaResource(Resource):
      def get(self):
         user = InformationAPI.get_user("Rhea")
         if user:
             return jsonify(user)
         return {"Data not found"}, 404
-    
-class RowanResource(Resource): 
+class RowanResource(Resource):
       def get(self):
         user = InformationAPI.get_user("Rowan")
         if user:
             return jsonify(user)
         return {"Data not found"}, 404
-    
-class GaheeraResource(Resource): 
+class GaheeraResource(Resource):
       def get(self):
         user = InformationAPI.get_user("Gaheera")
         if user:
             return jsonify(user)
         return {"Data not found"}, 404
-class BrandonResource(Resource): 
+class BrandonResource(Resource):
       def get(self):
         user = InformationAPI.get_user("Brandon")
         if user:
             return jsonify(user)
         return {"Data not found"}, 404
-    
-class CarsonResource(Resource): 
+class CarsonResource(Resource):
       def get(self):
         user = InformationAPI.get_user("Carson")
         if user:
             return jsonify(user)
         return {"Data not found"}, 404
-      
 # Building REST API endpoint
 api.add_resource(HannahResource, '/data/Hannah')
 api.add_resource(RheaResource, '/data/Rhea')

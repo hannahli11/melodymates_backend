@@ -1,6 +1,9 @@
 from flask import Flask, Blueprint, jsonify, request
-from flask_restful import Api
+from flask_restful import Api, Resource
 from flask_cors import CORS
+
+from model.musicChat import MusicChat
+
 
 # Initialize a Flask application
 musicChat_api = Blueprint('musicChat_api', __name__, url_prefix='/api/music_chat')
@@ -14,8 +17,8 @@ active_users = []  # Users who are currently logged in
 chats = {}  # Dictionary to store chats between users
 
 # API endpoint to send a message
-@musicChat_api.route('/chat', methods=['POST']) # endpoint to post a message on chatroom (POST METHOD)
-def send_message(): # function to send messages is defined
+@musicChat_api.route('/chat', methods=['POST']) # is endpoint to post a message on chatroom (POST METHOD)
+def send_message(): # function to send messages defined
     data = request.json
     if not data or "message" not in data or "user_id" not in data:
         return jsonify({"error": "Invalid input"}), 400

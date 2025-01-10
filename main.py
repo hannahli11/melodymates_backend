@@ -270,3 +270,5 @@ def store_user_status():
 @app.route('/api/user-status', methods=['GET'])
 def get_user_status():
     return jsonify(user_status_db)
+
+

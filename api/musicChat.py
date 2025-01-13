@@ -9,7 +9,7 @@ CORS(app, supports_credentials=True, origins='*')  # Allow all origins (*)
 
 api = Api(musicChat_api)
 
-# Hardcoded static data for chats and users
+# static data for chats and users
 active_users = [
     {"user_id": 1, "username": "Alice"},
     {"user_id": 2, "username": "Bob"},
@@ -63,7 +63,10 @@ def get_chat_history(user1, user2):
 
     return jsonify(chat_history), 200
 
+app.register_blueprint(musicChat_api)
 
-# if __name__ == "__main__":
-#     # change name for testing
-#     app.run(debug=True, host="0.0.0.0", port="8887")
+
+
+if __name__ == "__main__":
+    # change name for testing
+    app.run(debug=True, host="0.0.0.0", port="8887")

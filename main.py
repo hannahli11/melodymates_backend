@@ -269,6 +269,6 @@ def store_user_status():
 # Route to retrieve all user decisions
 @app.route('/api/user-status', methods=['GET'])
 def get_user_status():
-    return jsonify(user_status_db)
+    jsonify(user_status_db)
 
 

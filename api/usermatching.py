@@ -6,38 +6,34 @@ usermatching_api = Blueprint('usermatching_api', __name__, url_prefix='/api')
 api = Api(usermatching_api)
 
 # Sample user music preferences database
-users = {
+music_preferences = {
     "Hannah": {
-        "FavoriteArtist": "Taylor Swift",
-        "MusicPlatform": "Spotify",
-        "DiscoveryMethod": "Friends/Family",
-        "ListeningFrequency": "Several times a week",
-        "Era": "1980's",
-        "FavoriteAspect": "Vocals"
+        "Black Star - Radiohead": "No",
+        "Sicko Mode - Travis Scott": "Yes",
+        "Bad Guy - Billie Eilish": "No",
+        "No Tears Left to Cry - Ariana Grande": "Yes",
+        "Ex-Factor - Lauryn Hill": "No"
     },
     "Rhea": {
-        "FavoriteArtist": "SZA",
-        "MusicPlatform": "Spotify",
-        "DiscoveryMethod": "Social Media",
-        "ListeningFrequency": "Several times a week",
-        "Era": "2010's",
-        "FavoriteAspect": "Beat"
+        "Black Star - Radiohead": "Yes",
+        "Sicko Mode - Travis Scott": "No",
+        "Bad Guy - Billie Eilish": "Yes",
+        "No Tears Left to Cry - Ariana Grande": "No",
+        "Ex-Factor - Lauryn Hill": "Yes"
     },
     "Carson": {
-        "FavoriteArtist": "Frank Ocean",
-        "MusicPlatform": "Spotify",
-        "DiscoveryMethod": "Social Media",
-        "ListeningFrequency": "Everyday",
-        "Era": "Modern",
-        "FavoriteAspect": "Rhythm"
+        "Black Star - Radiohead": "No",
+        "Sicko Mode - Travis Scott": "Yes",
+        "Bad Guy - Billie Eilish": "No",
+        "No Tears Left to Cry - Ariana Grande": "Yes",
+        "Ex-Factor - Lauryn Hill": "No"
     },
     "Rowan": {
-        "FavoriteArtist": "Taylor Swift",
-        "MusicPlatform": "Spotify",
-        "DiscoveryMethod": "Music blogs",
-        "ListeningFrequency": "Everyday",
-        "Era": "1990's",
-        "FavoriteAspect": "Vocals"
+        "Black Star - Radiohead": "Yes",
+        "Sicko Mode - Travis Scott": "No",
+        "Bad Guy - Billie Eilish": "Yes",
+        "No Tears Left to Cry - Ariana Grande": "No",
+        "Ex-Factor - Lauryn Hill": "Yes"
     }
 }
 
@@ -92,4 +88,10 @@ class MatchResource(Resource):
 for user in users.keys():
     api.add_resource(UserResource, f'/data/{user}', resource_class_kwargs={'username': user})
 
-api.add_resource(MatchResource, '/match/<string:username>')
+# Building REST API endpoint
+api.add_resource(HannahResource, '/match/Hannah')
+api.add_resource(RheaResource, '/match/Rhea')
+api.add_resource(GaheeraResource, '/match/Gaheera')
+api.add_resource(RowanResource, '/match/Rowan')
+api.add_resource(CarsonResource, '/match/Carson')
+api.add_resource(BrandonResource, '/match/Brandon')

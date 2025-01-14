@@ -10,7 +10,7 @@ import os
 load_dotenv()
 
 # Setup of key Flask object (app)
-app = Flask(_name_)
+app = Flask(__name__)
 
 # Initialize Flask-Login object
 login_manager = LoginManager()

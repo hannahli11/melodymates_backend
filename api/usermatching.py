@@ -1,9 +1,12 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from flask_restful import Api, Resource
+import logging
 
-# Create a Flask Blueprint
+
 usermatching_api = Blueprint('usermatching_api', __name__, url_prefix='/api')
 api = Api(usermatching_api)
+
+logging.basicConfig(level=logging.DEBUG)
 
 # Sample user music preferences database
 music_preferences = {
@@ -37,14 +40,17 @@ music_preferences = {
     }
 }
 
-# Function to retrieve a user's music preferences
+
 def get_user_preferences(name):
+    logging.debug(f"Fetching preferences for user: {name}")
     return music_preferences.get(name, None)
 
-# Function to find the best music match
+
 def find_music_match(username):
+    logging.debug(f"Finding match for user: {username}")
     current_user = music_preferences.get(username)
     if not current_user:
+        logging.debug(f"No preferences found for user: {username}")
         return None
 
     best_match = None
@@ -59,24 +65,29 @@ def find_music_match(username):
             max_score = score
             best_match = {"username": user, **data}
 
+    logging.debug(f"Best match for user {username}: {best_match}")
     return best_match
 
-# Individual user data endpoints
+
 class UserResource(Resource):
     def get(self, username):
+        logging.debug(f"GET request for user data: {username}")
         user = get_user_preferences(username)
         if user:
             return jsonify(user)
+        logging.error(f"User not found: {username}")
         return {"message": "User not found"}, 404
 
-# Matchmaking endpoint
+
 class MatchResource(Resource):
     def get(self, username):
+        logging.debug(f"GET request for match: {username}")
         match = find_music_match(username)
         if match:
             return jsonify({"message": "Match found!", "match": match})
+        logging.error(f"No suitable match found for user: {username}")
         return {"message": "No suitable match found"}, 404
 
-# Register API endpoints dynamically
+
 api.add_resource(UserResource, '/data/<string:username>')
 api.add_resource(MatchResource, '/match/<string:username>')

@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
-from flask_restful import Api, Resource  # used for REST API building
-usermatching_api = Blueprint('usermatching_api', __name__, url_prefix='/api')
-api = Api(usermatching_api)
+from flask_restful import Api, Resource
+
+# Create a Flask Blueprint
 usermatching_api = Blueprint('usermatching_api', __name__, url_prefix='/api')
 api = Api(usermatching_api)
 
@@ -39,33 +39,26 @@ music_preferences = {
 
 # Function to retrieve a user's music preferences
 def get_user_preferences(name):
-    return users.get(name, None)
+    return music_preferences.get(name, None)
 
 # Function to find the best music match
 def find_music_match(username):
-    current_user = users.get(username)
+    current_user = music_preferences.get(username)
     if not current_user:
         return None
 
     best_match = None
     max_score = 0
 
-    for user, data in users.items():
+    for user, data in music_preferences.items():
         if user == username:
             continue
-        score = 0
-        if data["FavoriteArtist"] == current_user["FavoriteArtist"]:
-            score += 2
-        if data["Era"] == current_user["Era"]:
-            score += 2
-        if data["FavoriteAspect"] == current_user["FavoriteAspect"]:
-            score += 1
-        if data["DiscoveryMethod"] == current_user["DiscoveryMethod"]:
-            score += 1
+        score = sum(1 for song in current_user if current_user[song] == data.get(song, None))
+
         if score > max_score:
             max_score = score
             best_match = {"username": user, **data}
-    
+
     return best_match
 
 # Individual user data endpoints
@@ -84,14 +77,6 @@ class MatchResource(Resource):
             return jsonify({"message": "Match found!", "match": match})
         return {"message": "No suitable match found"}, 404
 
-# Registering API endpoints
-for user in users.keys():
-    api.add_resource(UserResource, f'/data/{user}', resource_class_kwargs={'username': user})
-
-# Building REST API endpoint
-api.add_resource(HannahResource, '/match/Hannah')
-api.add_resource(RheaResource, '/match/Rhea')
-api.add_resource(GaheeraResource, '/match/Gaheera')
-api.add_resource(RowanResource, '/match/Rowan')
-api.add_resource(CarsonResource, '/match/Carson')
-api.add_resource(BrandonResource, '/match/Brandon')
+# Register API endpoints dynamically
+api.add_resource(UserResource, '/data/<string:username>')
+api.add_resource(MatchResource, '/match/<string:username>')

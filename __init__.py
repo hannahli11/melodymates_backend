@@ -10,7 +10,7 @@ import os
 load_dotenv()
 
 # Setup of key Flask object (app)
-app = Flask(__name__)
+app = Flask(_name_)
 
 # Initialize Flask-Login object
 login_manager = LoginManager()
@@ -30,23 +30,24 @@ SECRET_KEY = os.environ.get('SECRET_KEY') or 'SECRET_KEY' # secret key for sessi
 SESSION_COOKIE_NAME = os.environ.get('SESSION_COOKIE_NAME') or 'sess_python_flask'
 JWT_TOKEN_NAME = os.environ.get('JWT_TOKEN_NAME') or 'jwt_python_flask'
 app.config['SECRET_KEY'] = SECRET_KEY
-app.config['SESSION_COOKIE_NAME'] = SESSION_COOKIE_NAME 
-app.config['JWT_TOKEN_NAME'] = JWT_TOKEN_NAME 
+app.config['SESSION_COOKIE_NAME'] = SESSION_COOKIE_NAME
+app.config['JWT_TOKEN_NAME'] = JWT_TOKEN_NAME
 
-# Database settings 
+# Database settings
 dbName = 'user_management'
 DB_ENDPOINT = os.environ.get('DB_ENDPOINT') or None
 DB_USERNAME = os.environ.get('DB_USERNAME') or None
 DB_PASSWORD = os.environ.get('DB_PASSWORD') or None
 if DB_ENDPOINT and DB_USERNAME and DB_PASSWORD:
     # Production - Use MySQL
-    
+   
     DB_PORT = '3306'
     DB_NAME = dbName
     dbString = f'mysql+pymysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_ENDPOINT}:{DB_PORT}'
     dbURI =  dbString + '/' + dbName
     backupURI = None  # MySQL backup would require a different approach
 else:
+   
     # Development - Use SQLite
     dbString = 'sqlite:///volumes/'
     dbURI = dbString + dbName + '.db'
@@ -63,9 +64,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# Image upload settings 
+# Image upload settings
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # maximum size of uploaded content
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']  # supported file types
+os.system('rm -rf ' + os.path.join(app.instance_path, 'uploads'))
 app.config['UPLOAD_FOLDER'] = os.path.join(app.instance_path, 'uploads')
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 

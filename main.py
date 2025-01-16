@@ -175,7 +175,6 @@ def generate_data():
     initUsers()
     initSections()
     initGroups()
-    initChannels()
     initPosts()
     initNestPosts()
     initVotes()
@@ -251,7 +250,7 @@ if __name__ == "__main__":
     # change name for testing
     app.run(debug=True, host="0.0.0.0", port="8887")
 
-@app.route('/api/user-status', methods=['POST'])
+'''@app.route('/api/user-status', methods=['POST'])
 def store_user_status():
     # Parse JSON data from request body
     data = request.get_json()
@@ -271,6 +270,6 @@ def store_user_status():
 # Route to retrieve all user decisions
 @app.route('/api/user-status', methods=['GET'])
 def get_user_status():
-    jsonify(user_status_db)
+    jsonify(user_status_db) '''
 
 

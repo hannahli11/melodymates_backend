@@ -1,14 +1,8 @@
 from flask import current_app, request, jsonify
 from sqlalchemy.exc import IntegrityError
 from flask_login import UserMixin
-from model.user import User  # Assuming ArtInfo is defined in model/user.py
 from __init__ import app, db
 
-
-from flask import current_app, request, jsonify
-from sqlalchemy.exc import IntegrityError
-from flask_login import UserMixin
-from __init__ import app, db
 
 
 class ArtInfo(db.Model, UserMixin):
@@ -78,9 +72,23 @@ class ArtInfo(db.Model, UserMixin):
         db.session.commit()
         return self
 
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+        def delete(self):
+            db.session.delete(self)
+            db.session.commit()
+    
+    @staticmethod
+    def restore(data):
+        artists = {}
+        for ArtInfo_data in data:
+            id = ArtInfo_data.get("id")
+            comment = ArtInfo.query.filter_by(id=id).first()
+            if comment:
+                comment.update(ArtInfo_data)
+            else:
+                print(ArtInfo_data)
+                artist = ArtInfo(ArtInfo_data.get("id"), ArtInfo_data.get("uid"), ArtInfo_data.get("name"), ArtInfo_data.get("favorites"))
+                artist.create()
+        return artists
 
 
 # Initialization function to add test data
@@ -89,15 +97,18 @@ def initArtinfo():
     Initializes the ArtInfo table with test data.
     """
     with app.app_context():
-        db.create_all()
+        db.create_all() 
         # Tester data for ArtInfo
-        a1 = ArtInfo(name='User One', uid='user1', favorites=['Artist A', 'Artist B'])
-        a2 = ArtInfo(name='User Two', uid='user2', favorites=['Artist C'])
-        a3 = ArtInfo(name='User Three', uid='user3', favorites=[])
-        artists = [a1, a2, a3]
+        u1 = ArtInfo(name='Hannah Li', uid='hannahli_11', favorites=['Travis Scott', 'Metro Boomin'])
+        u2 = ArtInfo(name='Brandon Smurlo', uid='bsmurlo', favorites=['Bob Marley'])
+        u3 = ArtInfo(name='Rhea Rajashakhar', uid='rhear_02', favorites=['Don Toliver'])
+        artists = [u1, u2, u3]
 
-        for artist in artists:
+    for artist in artists:
             try:
-                artist.create()
-            except IntegrityError:
-                db.session.rollback()  # Rolls back if there's an error
+                artist.create()  # Insert data into the database
+                print(f"Added artist {artist.name} successfully.")
+            except IntegrityError as e:
+                db.session.rollback()  # Rollback the session in case of an error
+                print(f"Error adding artist {artist.name}: {e}")
+                

@@ -43,7 +43,7 @@ from model.section import Section, initSections
 from model.group import Group, initGroups
 from model.channel import Channel, initChannels
 from model.post import Post, initPosts
-from model.musicChat import MusicChat
+from model.musicChat import MusicChat, initMusicChats
 from model.nestPost import NestPost, initNestPosts # Justin added this, custom format for his website
 from model.vote import Vote, initVotes
 from model.artInfo import ArtInfo, initArtinfo
@@ -179,6 +179,7 @@ def generate_data():
     initNestPosts()
     initVotes()
     initArtinfo()
+    initMusicChats()
     
 # Backup the old database
 def backup_database(db_uri, backup_uri):

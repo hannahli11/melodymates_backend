@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 from flask_restful import Api, Resource
 import logging
 
@@ -39,55 +39,57 @@ music_preferences = {
         "Ex-Factor - Lauryn Hill": "Yes"
     }
 }
-
-
-def get_user_preferences(name):
-    logging.debug(f"Fetching preferences for user: {name}")
-    return music_preferences.get(name, None)
-
-
-def find_music_match(username):
-    logging.debug(f"Finding match for user: {username}")
-    current_user = music_preferences.get(username)
-    if not current_user:
-        logging.debug(f"No preferences found for user: {username}")
-        return None
-
-    best_match = None
-    max_score = 0
-
-    for user, data in music_preferences.items():
-        if user == username:
-            continue
-        score = sum(1 for song in current_user if current_user[song] == data.get(song, None))
-
-        if score > max_score:
-            max_score = score
-            best_match = {"username": user, **data}
-
-    logging.debug(f"Best match for user {username}: {best_match}")
-    return best_match
-
-
-class UserResource(Resource):
-    def get(self, username):
-        logging.debug(f"GET request for user data: {username}")
-        user = get_user_preferences(username)
-        if user:
-            return jsonify(user)
-        logging.error(f"User not found: {username}")
-        return {"message": "User not found"}, 404
-
-
-class MatchResource(Resource):
-    def get(self, username):
-        logging.debug(f"GET request for match: {username}")
-        match = find_music_match(username)
+class UsermatchingAPI:
+    @staticmethod
+    def find_music_match(username):
+        logging.debug(f"Finding match for user: {username}")
+        current_user = music_preferences.get(username)
+        if not current_user:
+            logging.debug(f"No preferences found for user: {username}")
+            return None
+       
+        best_match = None
+        max_score = 0
+       
+        for user, data in music_preferences.items():
+            if user == username:
+                continue
+            score = sum(1 for song in current_user if current_user[song] == data.get(song, None))
+           
+            if score > max_score:
+                max_score = score
+                best_match = {"username": user, **data}
+        
+        logging.debug(f"Best match for user {username}: {best_match}")
+        return best_match
+# Match resources for each user
+class HannahMatchResource(Resource):
+    def get(self):
+        match = UsermatchingAPI.find_music_match("Hannah")
         if match:
             return jsonify({"message": "Match found!", "match": match})
-        logging.error(f"No suitable match found for user: {username}")
         return {"message": "No suitable match found"}, 404
-
-
-api.add_resource(UserResource, '/data/<string:username>')
-api.add_resource(MatchResource, '/match/<string:username>')
+class RheaMatchResource(Resource):
+    def get(self):
+        match = UsermatchingAPI.find_music_match("Rhea")
+        if match:
+            return jsonify({"message": "Match found!", "match": match})
+        return {"message": "No suitable match found"}, 404
+class CarsonMatchResource(Resource):
+    def get(self):
+        match = UsermatchingAPI.find_music_match("Carson")
+        if match:
+            return jsonify({"message": "Match found!", "match": match})
+        return {"message": "No suitable match found"}, 404
+class RowanMatchResource(Resource):
+    def get(self):
+        match = UsermatchingAPI.find_music_match("Rowan")
+        if match:
+            return jsonify({"message": "Match found!", "match": match})
+        return {
+            "message": "No suitable match found"}, 404
+# Adding match resources to the API
+api.add_resource(HannahMatchResource, '/match/Hannah')  # /api/match/Hannah
+api.add_resource(RheaMatchResource, '/match/Rhea')      # /api/match/Rhea
+api.add_resource(CarsonMatchResource, '/match/Carson')  # /api/match/Carson
+api.add_resource(RowanMatchResource, '/match/Rowan')    # /api/match/Rowan

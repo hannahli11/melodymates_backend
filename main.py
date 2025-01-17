@@ -180,11 +180,7 @@ def generate_data():
     initNestPosts()
     initVotes()
     initArtinfo()
-<<<<<<< HEAD
-    initMusicChats()
-=======
     initMusicPref()
->>>>>>> 0b24d12 (Brandon table)
     
 # Backup the old database
 def backup_database(db_uri, backup_uri):

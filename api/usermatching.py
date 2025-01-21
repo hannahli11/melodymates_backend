@@ -86,8 +86,7 @@ class RowanMatchResource(Resource):
         match = UsermatchingAPI.find_music_match("Rowan")
         if match:
             return jsonify({"message": "Match found!", "match": match})
-        return {
-            "message": "No suitable match found"}, 404
+        return {"message": "No suitable match found"}, 404
 # Adding match resources to the API
 api.add_resource(HannahMatchResource, '/match/Hannah')  # /api/match/Hannah
 api.add_resource(RheaMatchResource, '/match/Rhea')      # /api/match/Rhea

@@ -48,6 +48,7 @@ from model.nestPost import NestPost, initNestPosts # Justin added this, custom f
 from model.vote import Vote, initVotes
 from model.artInfo import ArtInfo, initArtinfo
 from model.musicpref import MusicPref, initMusicPref
+from model.censor import Censor, initCensor
 # server only Views
 
 # register URIs for api endpoints
@@ -181,6 +182,8 @@ def generate_data():
     initVotes()
     initArtinfo()
     initMusicPref()
+    initMusicChats()
+    initCensor()
     
 # Backup the old database
 def backup_database(db_uri, backup_uri):

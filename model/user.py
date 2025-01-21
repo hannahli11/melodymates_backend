@@ -1,4 +1,3 @@
-# user.py
 from flask import current_app
 from flask_login import UserMixin
 from datetime import date
@@ -10,25 +9,6 @@ import json
 
 from __init__ import app, db
 
-
-""" Helper Functions """
-
-
-def default_year():
-    """
-    Returns the default year for user enrollment based on the current month.
-   
-    If the current month is between August (8) and December (12), the enrollment year is the next year.
-    Otherwise, it is the current year.
-   
-    Returns:
-        int: The default year for user enrollment.
-    """
-    current_month = date.today().month
-    current_year = date.today().year
-    if 7 <= current_month <= 12:
-        current_year += 1
-    return current_year
 
 
 """ Database Models """

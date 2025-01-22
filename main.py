@@ -74,6 +74,7 @@ app.register_blueprint(profilematching_api)
 app.register_blueprint(musicChat_api)
 app.register_blueprint(information_api)
 app.register_blueprint(profile_api)
+app.register_blueprint(usermatching_api)
 
 # Tell Flask-Login the view function name of your login route
 login_manager.login_view = "login"

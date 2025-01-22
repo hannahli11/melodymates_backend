@@ -175,6 +175,7 @@ custom_cli = AppGroup('custom', help='Custom commands')
 # Define a command to run the data generation functions
 @custom_cli.command('generate_data')
 def generate_data():
+    initArtinfo()
     initUsers()
     initSections()
     initGroups()
@@ -206,6 +207,7 @@ def extract_data():
         data['groups'] = [group.read() for group in Group.query.all()]
         data['channels'] = [channel.read() for channel in Channel.query.all()]
         data['posts'] = [post.read() for post in Post.query.all()]
+        data['artinfos'] = [artist.read() for artist in ArtInfo.query.all()]
     return data
 
 # Save extracted data to JSON files
@@ -220,7 +222,7 @@ def save_data_to_json(data, directory='backup'):
 # Load data from JSON files
 def load_data_from_json(directory='backup'):
     data = {}
-    for table in ['users', 'sections', 'groups', 'channels', 'posts']:
+    for table in ['users', 'sections', 'groups', 'channels', 'posts', 'artinfo']:
         with open(os.path.join(directory, f'{table}.json'), 'r') as f:
             data[table] = json.load(f)
     return data
@@ -233,6 +235,7 @@ def restore_data(data):
         _ = Group.restore(data['groups'], users)
         _ = Channel.restore(data['channels'])
         _ = Post.restore(data['posts'])
+        _ = ArtInfo.restore(data['artinfo'])
     print("Data restored to the new database.")
 
 # Define a command to backup data

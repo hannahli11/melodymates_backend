@@ -75,20 +75,35 @@ class ArtInfo(db.Model, UserMixin):
         def delete(self):
             db.session.delete(self)
             db.session.commit()
-    
     @staticmethod
     def restore(data):
-        artists = {}
-        for ArtInfo_data in data:
-            id = ArtInfo_data.get("id")
-            comment = ArtInfo.query.filter_by(id=id).first()
-            if comment:
-                comment.update(ArtInfo_data)
+        """
+        Synchronizes the provided data with the ArtInfo database.
+        Updates existing records or creates new ones.
+        """
+        restored_records = []
+        for art_data in data:
+            id = art_data.get("id")  # Fetch the id from the provided data
+            record = ArtInfo.query.filter_by(id=id).first()
+
+            if record:
+                # Update the existing record
+                record.update(art_data)
+                restored_records.append(record.read())
             else:
-                print(ArtInfo_data)
-                artist = ArtInfo(ArtInfo_data.get("id"), ArtInfo_data.get("uid"), ArtInfo_data.get("name"), ArtInfo_data.get("favorites"))
-                artist.create()
-        return artists
+                # Create a new record if it doesn't exist
+                try:
+                    new_record = ArtInfo(
+                        name=art_data.get("name"),
+                        uid=art_data.get("uid"),
+                        favorites=art_data.get("favorites", [])
+                    )
+                    new_record.create()
+                    restored_records.append(new_record.read())
+                except IntegrityError as e:
+                    db.session.rollback()  # Rollback the session in case of any error
+                    print(f"Error restoring record with uid {art_data.get('uid')}: {e}")
+        return restored_records
 
 
 # Initialization function to add test data

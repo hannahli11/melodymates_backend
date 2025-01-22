@@ -1,91 +1,133 @@
-from flask import request, jsonify, g
-from flask_restful import Resource
-from sqlalchemy.exc import IntegrityError
-from __init__ import db
-from model.artInfo import ArtInfo  # Ensure your `ArtInfo` model is imported correctly
+from flask import Blueprint, jsonify, Flask, request
+from flask_restful import Api, Resource # used for REST API building
+from flask_cors import CORS
+from model.artInfo import ArtInfo 
 
-class ArtInfoCRUD(Resource):
-    def post(self):
-        """
-        Create a new artist entry in the database.
+artrec_api = Blueprint('artrec_api', __name__, url_prefix='/api')
+app = Flask(__name__)
+CORS(app, supports_credentials=True, origins='*')  
+# API docs https://flask-restful.readthedocs.io/en/latest/
+api = Api(artrec_api)
 
-        Returns:
-            JSON response with the created artist details or an error message.
-        """
-        body = request.get_json()
 
-        # Validate required fields
-        name = body.get('name')
-        uid = body.get('uid')
-        favorites = body.get('favorites', [])
-
-        if not name or len(name) < 2:
-            return {'message': 'Name is missing or too short (minimum 2 characters).'}, 400
-        if not uid or len(uid) < 2:
-            return {'message': 'UID is missing or too short (minimum 2 characters).'}, 400
-
-        # Create a new ArtInfo instance
-        new_artist = ArtInfo(name=name, uid=uid, favorites=favorites)
-
-        try:
-            new_artist.create()
-        except IntegrityError as e:
-            db.session.rollback()
-            return {'message': f'Error creating artist: {e}'}, 400
-
-        return jsonify(new_artist.read())
-
+class ArtrecAPI:
+    @staticmethod
+    def get_user(name):
+        users = {
+            "Hannah": {
+                "Username": "hannahli_11",
+                "FavoriteArtists": "Gracie Abrams, Don Toliver, Ariana Grande",
+                "ArtistReccomendation": "Travis Scott, SZA, Phoebe Bridgers"
+            },
+            "Rhea": {
+                "Username": "rhear_02",
+                "FavoriteArtists": "The Weeknd, Don Toliver, Metro Boomin",
+                "ArtistReccomendation": "Drake, Lil Uzi Vert, 21 Savage"
+            },
+            "Gaheera": {
+                "Username": "gaheerb",
+                "FavoriteArtists": "Future, Don Toliver, Travis Scott",
+                "ArtistReccomendation": "Roddy Rich, NAV, PartyNextDoor"
+            },
+            "Carson": {
+                "Username": "carsonsuth17",
+                "FavoriteArtists": "Brent Faiyaz, Radiohead, Drake",
+                "ArtistReccomendation": "Giveon, Tame Impala, J. Cole"
+            },
+            "Rowan": {
+                "Username": "rowangs",
+                "FavoriteArtists": "Hozier,  Imogen Heap, Big Theif",
+                "ArtistReccomendation": "Leon Bridges, Grimes, Phoebe Bridgers"
+            },
+             "Brandon": {
+                "Username": "bsmurlo",
+                "FavoriteArtists": "T-dre, Bryson Tiller, Bob Marley",
+                "ArtistReccomendation": "J. Cole, Torey Lanez, Peter Tosh"
+            }
+        }
+        return users[name]
+    
+class HannahResource(Resource): 
     def get(self):
-        """
-        Retrieve all artist entries from the database.
-
-        Returns:
-            JSON response with a list of artist details.
-        """
-        artists = ArtInfo.query.all()
-        return jsonify([artist.read() for artist in artists])
-
-    def put(self):
-        """
-        Update an existing artist entry in the database.
-
-        Returns:
-            JSON response with the updated artist details or an error message.
-        """
+        user = ArtrecAPI.get_user("Hannah")
+        if user:
+            return jsonify(user)
+        return {"Data not found"}, 404
+    
+class RheaResource(Resource): 
+     def get(self):
+        user = ArtrecAPI.get_user("Rhea")
+        if user:
+            return jsonify(user)
+        return {"Data not found"}, 404
+    
+class RowanResource(Resource): 
+      def get(self):
+        user = ArtrecAPI.get_user("Rowan")
+        if user:
+            return jsonify(user)
+        return {"Data not found"}, 404
+    
+class GaheeraResource(Resource): 
+      def get(self):
+        user = ArtrecAPI.get_user("Gaheera")
+        if user:
+            return jsonify(user)
+        return {"Data not found"}, 404
+class BrandonResource(Resource): 
+      def get(self):
+        user = ArtrecAPI.get_user("Brandon")
+        if user:
+            return jsonify(user)
+        return {"Data not found"}, 404
+    
+class CarsonResource(Resource): 
+      def get(self):
+        user = ArtrecAPI.get_user("Carson")
+        if user:
+            return jsonify(user)
+        return {"Data not found"}, 404
+      
+class _addArtInfo(Resource):
+    def post(self): 
+        print("POST /artinfo/add called")  # Debug log
         body = request.get_json()
+        print(f"Received body: {body}")
+
+        # Validate name
+        name = body.get('name')
+        if name is None or len(name) < 2:
+            return {'message': 'Name is missing, or is less than 2 characters'}, 400
+
+        # Validate uid
         uid = body.get('uid')
+        if uid is None or len(uid) < 2:
+            return {'message': 'User ID is missing, or is less than 2 characters'}, 400
 
-        if not uid:
-            return {'message': 'UID is required to update artist details.'}, 400
+        # Validate favorites
+        favorites = body.get('favorites', [])
+        if not isinstance(favorites, list):
+            return {'message': 'Favorites must be a list of artist names'}, 400
 
-        # Retrieve the artist by UID
-        artist = ArtInfo.query.filter_by(_uid=uid).first()
-        if not artist:
-            return {'message': f'Artist with UID {uid} not found.'}, 404
+        # Setup ArtInfo object
+        art_info_obj = ArtInfo(name=name, uid=uid, favorites=favorites)
 
-        # Update the artist's details
-        artist.update(body)
+        artist = art_info_obj.create()
+        if not artist:  # failure returns error message
+                return {'message': f'Processed {name}'}, 400
         return jsonify(artist.read())
+    
+      
+# Building REST API endpoint
+api.add_resource(HannahResource, '/user/Hannah')
+api.add_resource(RheaResource, '/user/Rhea')
+api.add_resource(GaheeraResource, '/user/Gaheera')
+api.add_resource(RowanResource, '/user/Rowan')
+api.add_resource(CarsonResource, '/user/Carson')
+api.add_resource(BrandonResource, '/user/Brandon')
+api.add_resource(_addArtInfo, '/artinfo/add')
+app.register_blueprint(artrec_api)  # Register Blueprint with Flask app
 
-    def delete(self):
-        """
-        Delete an artist entry from the database.
+if __name__ == "__main__":
+    app.run(debug=True, port=8887) 
 
-        Returns:
-            JSON response with a success message or an error message.
-        """
-        body = request.get_json()
-        uid = body.get('uid')
-
-        if not uid:
-            return {'message': 'UID is required to delete an artist.'}, 400
-
-        # Retrieve the artist by UID
-        artist = ArtInfo.query.filter_by(_uid=uid).first()
-        if not artist:
-            return {'message': f'Artist with UID {uid} not found.'}, 404
-
-        # Delete the artist
-        artist_json = artist.read()
-        artist.delete()
-        return f"Deleted artist: {artist_json}", 204

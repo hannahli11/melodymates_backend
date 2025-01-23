@@ -4,8 +4,8 @@ from flask_cors import CORS
 from model.artInfo import ArtInfo 
 
 artrec_api = Blueprint('artrec_api', __name__, url_prefix='/api')
-app = Flask(__name__)
-CORS(app, supports_credentials=True, origins='*')  
+#app = Flask(__name__)
+#CORS(app, supports_credentials=True, origins='*')  
 # API docs https://flask-restful.readthedocs.io/en/latest/
 api = Api(artrec_api)
 
@@ -88,11 +88,9 @@ class CarsonResource(Resource):
             return jsonify(user)
         return {"Data not found"}, 404
       
-class _addArtInfo(Resource):
-    def post(self): 
-        print("POST /artinfo/add called")  # Debug log
+class _AddArtInfo(Resource):
+    def post(self):  # Debug log
         body = request.get_json()
-        print(f"Received body: {body}")
 
         # Validate name
         name = body.get('name')
@@ -125,9 +123,5 @@ api.add_resource(GaheeraResource, '/user/Gaheera')
 api.add_resource(RowanResource, '/user/Rowan')
 api.add_resource(CarsonResource, '/user/Carson')
 api.add_resource(BrandonResource, '/user/Brandon')
-api.add_resource(_addArtInfo, '/artinfo/add')
-app.register_blueprint(artrec_api)  # Register Blueprint with Flask app
-
-if __name__ == "__main__":
-    app.run(debug=True, port=8887) 
+api.add_resource(_AddArtInfo, '/artinfo/add')
 

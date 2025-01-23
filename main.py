@@ -183,9 +183,6 @@ def generate_data():
     initNestPosts()
     initVotes()
     initArtinfo()
-    initMusicPref()
-    initMusicChats()
-    initCensor()
     
 # Backup the old database
 def backup_database(db_uri, backup_uri):

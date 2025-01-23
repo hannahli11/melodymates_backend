@@ -3,19 +3,18 @@ from sqlalchemy.exc import IntegrityError
 from flask_login import UserMixin
 from __init__ import app, db
 
-
 class MusicPref(db.Model, UserMixin):
     __tablename__ = 'musicpref'
 
     id = db.Column(db.Integer, primary_key=True)
-    _name = db.Column(db.String(255), nullable=False)  # User's name
-    _uid = db.Column(db.String(255), unique=True, nullable=False)  # User's unique identifier
-    _favorites = db.Column(db.JSON, nullable=True)  # JSON column to store favorite artists
-    _music_platform = db.Column(db.String(255), nullable=True)  # Favorite music platform
-    _learn_preference = db.Column(db.String(255), nullable=True)  # How they learn about music
-    _listening_frequency = db.Column(db.String(255), nullable=True)  # Listening frequency
-    _favorite_era = db.Column(db.String(255), nullable=True)  # Favorite era of music
-    _important_aspect = db.Column(db.String(255), nullable=True)  # Most important aspect of music
+    _name = db.Column(db.String(255), nullable=False)
+    _uid = db.Column(db.String(255), unique=True, nullable=False)
+    _favorites = db.Column(db.JSON, nullable=True)
+    _music_platform = db.Column(db.String(255), nullable=True)
+    _learn_preference = db.Column(db.String(255), nullable=True)
+    _listening_frequency = db.Column(db.String(255), nullable=True)
+    _favorite_era = db.Column(db.String(255), nullable=True)
+    _important_aspect = db.Column(db.String(255), nullable=True)
 
     def __init__(self, name, uid, favorites=None, music_platform=None, learn_preference=None, 
                  listening_frequency=None, favorite_era=None, important_aspect=None):
@@ -60,24 +59,26 @@ class MusicPref(db.Model, UserMixin):
     def important_aspect(self):
         return self._important_aspect
 
-    def add_favorite(self, artist_name):
-        if artist_name not in self._favorites:
-            self._favorites.append(artist_name)
-            db.session.commit()
-            return True
-        return False
-
-    def remove_favorite(self, artist_name):
-        if artist_name in self._favorites:
-            self._favorites.remove(artist_name)
-            db.session.commit()
-            return True
-        return False
-
     def create(self):
-        db.session.add(self)
-        db.session.commit()
-        return self
+        # Check if user already exists
+        existing_user = MusicPref.query.filter_by(_uid=self._uid).first()
+
+        if existing_user:
+            # Update the existing user's data
+            existing_user._name = self._name
+            existing_user._favorites = self._favorites
+            existing_user._music_platform = self._music_platform
+            existing_user._learn_preference = self._learn_preference
+            existing_user._listening_frequency = self._listening_frequency
+            existing_user._favorite_era = self._favorite_era
+            existing_user._important_aspect = self._important_aspect
+            db.session.commit()
+            return existing_user
+        else:
+            # If user doesn't exist, create a new user
+            db.session.add(self)
+            db.session.commit()
+            return self
 
     def read(self):
         return {
@@ -111,22 +112,54 @@ class MusicPref(db.Model, UserMixin):
         db.session.delete(self)
         db.session.commit()
 
+# Handling GET, POST, PUT, DELETE in API
 
-# Initialization function to add test data
+# POST - Create or Update a user
+def create_or_update_music_pref(data):
+    uid = data.get("uid")
+    user = MusicPref.query.filter_by(_uid=uid).first()
+    
+    if user:
+        # If user exists, update the record
+        return user.update(data)
+    else:
+        # If user doesn't exist, create a new record
+        new_user = MusicPref(**data)
+        return new_user.create()
+
+# GET - Get a user's data
+def get_music_pref(uid):
+    user = MusicPref.query.filter_by(_uid=uid).first()
+    if user:
+        return user.read()
+    else:
+        return None
+
+# PUT - Update an existing user's data
+def update_music_pref(uid, data):
+    user = MusicPref.query.filter_by(_uid=uid).first()
+    if user:
+        return user.update(data)
+    else:
+        return None
+
+# DELETE - Delete a user from the database
+def delete_music_pref(uid):
+    user = MusicPref.query.filter_by(_uid=uid).first()
+    if user:
+        user.delete()
+        return True
+    else:
+        return False
+
+# Initialize with some test data
 def initMusicPref():
     with app.app_context():
         db.create_all()
-        u1 = MusicPref(name='Hannah Li', uid='hannahli_11', favorites=['Travis Scott'], 
-                       music_platform='Spotify', learn_preference='Social Media', 
-                       listening_frequency='Daily', favorite_era='2000s', important_aspect='Lyrics')
-        u2 = MusicPref(name='Brandon Smurlo', uid='bsmurlo', favorites=['Bob Marley'], 
-                       music_platform='Apple Music', learn_preference='Friends', 
-                       listening_frequency='Weekly', favorite_era='70s', important_aspect='Melody')
+        u1 = MusicPref(name='Brandon Smurlo', uid='brandonsmurlo_08', favorites=['Travis Scott'], 
+                       music_platform='Spotify', learn_preference='Social Media', listening_frequency='Weekly', 
+                       favorite_era='Modern', important_aspect='Vocals')
+        u1.create()
 
-        for user in [u1, u2]:
-            try:
-                user.create()
-                print(f"Added user {user.name} successfully.")
-            except IntegrityError as e:
-                db.session.rollback()
-                print(f"Error adding user {user.name}: {e}")
+# Call init function to set up database and add test users
+initMusicPref()

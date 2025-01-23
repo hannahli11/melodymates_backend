@@ -1,120 +1,45 @@
-from flask import Blueprint, jsonify, Flask
+from flask import Blueprint, jsonify, Flask, request
 from flask_restful import Api, Resource
-from flask_cors import CORS  # Handles cross-origin requests
+from flask_cors import CORS
+from model.musicpref import MusicPref  # Importing your MusicPref model
+from __init__ import db  # Import the db object from __init__.py
 
 # Set up the Flask app and API
-information_api = Blueprint('information_api', __name__, url_prefix='/api')  # Blueprint for modular API
+information_api = Blueprint('information_api', __name__, url_prefix='/api')
 app = Flask(__name__)
 CORS(app, supports_credentials=True, origins='*')  # Allows frontend to talk to the backend without issues
 api = Api(information_api)  # Connect the API to the Blueprint
 
-# This is where we store all the user info (static data)
-class InformationAPI:
-    @staticmethod
-    def get_user(name):
-        users = {
-            "Hannah": {
-                "ArtistPref": "Taylor Swift",
-                "Method": "Spotify",
-                "NewMusic": "Friends/Family",
-                "HowOften": "Several times a week",
-                "Era": "1980's",
-                "FavoriteAspect": "Vocals"
-            },
-            "Rhea": {
-                "ArtistPref": "SZA",
-                "Method": "Spotify",
-                "NewMusic": "Social Media",
-                "HowOften": "Several times a week",
-                "Era": "2010's",
-                "FavoriteAspect": "Beat"
-            },
-            "Gaheera": {
-                "ArtistPref": "Taylor Swift",
-                "Method": "Spotify",
-                "NewMusic": "Radio",
-                "HowOften": "Every day",
-                "Era": "2000's",
-                "FavoriteAspect": "Vocals"
-            },
-            "Carson": {
-                "ArtistPref": "Frank Ocean",
-                "Method": "Spotify",
-                "NewMusic": "Social Media",
-                "HowOften": "Everyday",
-                "Era": "Modern",
-                "FavoriteAspect": "Rhythm"
-            },
-            "Rowan": {
-                "ArtistPref": "Taylor Swift",
-                "Method": "Spotify",
-                "NewMusic": "Music blogs",
-                "HowOften": "Everyday",
-                "Era": "1990's",
-                "FavoriteAspect": "Vocals"
-            },
-            "Brandon": {
-                "ArtistPref": "Travis Scott",
-                "Method": "Spotify",
-                "NewMusic": "Social media",
-                "HowOften": "Several times a week",
-                "Era": "2000's",
-                "FavoriteAspect": "Beat"
-            }
-        }
-        # Try to get the user data by name, or return None if not found
-        return users.get(name)
+# Class for handling MusicPref data input and storing in the database
+class MusicPrefResource(Resource):
+    def post(self):
+        data = request.get_json()  # Get JSON data from the request
+        if not data:
+            return {'message': 'No input data provided'}, 400
 
-# Each class below is basically an endpoint for one user's data
-class HannahResource(Resource):
-    def get(self):
-        user = InformationAPI.get_user("Hannah")
-        if user:  # If we found the user, return their data
-            return jsonify(user)
-        return {"Data not found"}, 404  # If no data, send a 404 error
+        # Extracting the necessary fields from the incoming data
+        name = data.get('name')
+        uid = data.get('uid')
+        favorites = data.get('favorites', [])
+        music_platform = data.get('music_platform')
+        learn_preference = data.get('learn_preference')
+        listening_frequency = data.get('listening_frequency')
+        favorite_era = data.get('favorite_era')
+        important_aspect = data.get('important_aspect')
 
-class RheaResource(Resource):
-    def get(self):
-        user = InformationAPI.get_user("Rhea")
-        if user:
-            return jsonify(user)
-        return {"Data not found"}, 404
+        # Create a new MusicPref object using the provided data
+        user = MusicPref(name=name, uid=uid, favorites=favorites, music_platform=music_platform, 
+                         learn_preference=learn_preference, listening_frequency=listening_frequency, 
+                         favorite_era=favorite_era, important_aspect=important_aspect)
 
-class GaheeraResource(Resource):
-    def get(self):
-        user = InformationAPI.get_user("Gaheera")
-        if user:
-            return jsonify(user)
-        return {"Data not found"}, 404
+        # Save the new user data to the database
+        user.create()
 
-class CarsonResource(Resource):
-    def get(self):
-        user = InformationAPI.get_user("Carson")
-        if user:
-            return jsonify(user)
-        return {"Data not found"}, 404
+        # Return the stored user data as a JSON response
+        return jsonify(user.read())
 
-class RowanResource(Resource):
-    def get(self):
-        user = InformationAPI.get_user("Rowan")
-        if user:
-            return jsonify(user)
-        return {"Data not found"}, 404
-
-class BrandonResource(Resource):
-    def get(self):
-        user = InformationAPI.get_user("Brandon")
-        if user:
-            return jsonify(user)
-        return {"Data not found"}, 404
-
-# Add routes for each user. The URL will map to the right resource.
-api.add_resource(HannahResource, '/data/Hannah')  # /api/data/Hannah
-api.add_resource(RheaResource, '/data/Rhea')      # /api/data/Rhea
-api.add_resource(GaheeraResource, '/data/Gaheera')  # /api/data/Gaheera
-api.add_resource(CarsonResource, '/data/Carson')  # /api/data/Carson
-api.add_resource(RowanResource, '/data/Rowan')    # /api/data/Rowan
-api.add_resource(BrandonResource, '/data/Brandon')  # /api/data/Brandon
+# Add the resource to the API
+api.add_resource(MusicPrefResource, '/data/musicpref')  # /api/data/musicpref
 
 # Register the Blueprint with the Flask app
 app.register_blueprint(information_api)

@@ -45,9 +45,33 @@ class ArtInfo(db.Model, UserMixin):
         return False
 
     def create(self):
-        db.session.add(self)
-        db.session.commit()
-        return self
+        # Check if user already exists
+        existing_user = ArtInfo.query.filter_by(_uid=self._uid).first()
+
+        if existing_user:
+            # Update the existing user's data
+            existing_user._name = self._name
+            existing_user._uid = self._uid
+            existing_user._favorites = self._favorites
+            db.session.commit()
+            return existing_user
+        else:
+            # If user doesn't exist, create a new user
+            db.session.add(self)
+            db.session.commit()
+            return self
+        
+    def create_or_update_art_info(data):
+        uid = data.get("uid")
+        artist = ArtInfo.query.filter_by(_uid=uid).first()
+    
+        if artist:
+        # If user exists, update the record
+            return artist.update(data)
+        else:
+        # If user doesn't exist, create a new record
+            new_artist = ArtInfo(**data)
+            return new_artist.create()
 
     def read(self):
         return {
@@ -72,9 +96,10 @@ class ArtInfo(db.Model, UserMixin):
         db.session.commit()
         return self
 
-        def delete(self):
-            db.session.delete(self)
-            db.session.commit()
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+        
     @staticmethod
     def restore(data):
         """

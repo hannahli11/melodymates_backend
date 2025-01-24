@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, Flask
 from flask_restful import Api, Resource
 from flask_cors import CORS  # Handles cross-origin requests
+from model.musicpref import MusicPref
 
 # Set up the Flask app and API
 usermatching_api = Blueprint('usermatching_api', __name__, url_prefix='/api')  # Blueprint for modular API
@@ -88,7 +89,7 @@ class RowanResource(Resource):
 
 # Add routes for each user. The URL will map to the right resource.
 api.add_resource(HannahResource, '/match/Hannah')  # /api/match/Hannah
-api.add_resource(RheaResource, '/match/Rhea')      # /api/match/Rhea
+api.add_resource(RheaResource, '/match/Rhea')      # /a"Ex-Factor - Lauryn Hill"pi/match/Rhea
 api.add_resource(CarsonResource, '/match/Carson')  # /api/match/Carson
 api.add_resource(RowanResource, '/match/Rowan')    # /api/match/Rowan
 

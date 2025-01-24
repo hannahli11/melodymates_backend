@@ -28,10 +28,12 @@ from api.messages_api import messages_api # Adi added this, messages for his web
 from api.carphoto import car_api
 from api.carChat import car_chat_api
 from api.student import student_api
-from api.usermatching import usermatching_api
+from api.usermatching import usermatching_api # Justin added this, custom format for his website
+
+
 from api.artrec import artrec_api
 from api.musicChat import musicChat_api
-from api.profilematching import profilematching_api
+
 from api.information import information_api
 from api.public_profile import profile_api
 
@@ -49,6 +51,8 @@ from model.vote import Vote, initVotes
 from model.artInfo import ArtInfo, initArtinfo
 from model.musicpref import MusicPref, initMusicPref
 from model.censor import Censor, initCensor
+from model.UserMatch import UserMatch, initUserMatch
+
 # server only Views
 
 # register URIs for api endpoints
@@ -70,7 +74,7 @@ app.register_blueprint(vote_api)
 app.register_blueprint(car_api)
 app.register_blueprint(student_api)
 app.register_blueprint(artrec_api)
-app.register_blueprint(profilematching_api)
+
 app.register_blueprint(musicChat_api)
 app.register_blueprint(information_api)
 app.register_blueprint(profile_api)
@@ -183,6 +187,10 @@ def generate_data():
     initNestPosts()
     initVotes()
     initArtinfo()
+    initMusicPref()
+    initMusicChats()
+    initCensor()
+    initUserMatch() 
     
 # Backup the old database
 def backup_database(db_uri, backup_uri):

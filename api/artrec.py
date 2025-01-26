@@ -134,7 +134,8 @@ class ArtInfoResource(Resource):
         """
         Update artist details.
 
-        Retrieves the current artist from the token_required authentication check and updates the artist details based on the JSON body of the request.
+        Retrieves the current artist based on the passed UID (from request body or query parameters)
+        and updates the artist details.
 
         Returns:
             JSON response with the updated artist details or an error message.
@@ -142,25 +143,27 @@ class ArtInfoResource(Resource):
         # Read data from the JSON body of the request
         body = request.get_json()
 
-        ''' Admin-specific update handling '''
-        if current_artist.role == 'Admin':
-            uid = body.get('uid')
-            # Admin is updating themselves
-            if uid is None or uid == current_artist.uid:
-                artist = current_artist
-            else:  # Admin is updating another artist
-                """ ArtInfo SQLAlchemy query returning a single artist """
-                artist = ArtInfo.query.filter_by(_uid=uid).first()
-                if artist is None:
-                    return {'message': f'Artist {uid} not found'}, 404
-        else:
-            # Non-admin can only update themselves
-            artist = current_artist
+        # Ensure we have data in the body
+        if not body:
+            return {'message': 'No data provided'}, 400
 
-        # Update the ArtInfo object to the database using custom update method
-        artist.update(body)
-        
-        # return response, the updated artist details as a JSON object
+        # Get the artist's UID from the request body or query params
+        uid = body.get('uid') or request.args.get('uid')
+        if not uid:
+            return {'message': 'UID is required to update artist details'}, 400
+
+        # Find the artist by UID
+        artist = ArtInfo.query.filter_by(_uid=uid).first()
+        if artist is None:
+            return {'message': f'Artist with UID {uid} not found'}, 404
+
+        # Perform the update logic
+        try:
+            artist.update(body)  # Assuming the update method exists on the artist object
+        except Exception as e:
+            return {'message': f'Error updating artist: {str(e)}'}, 500
+
+        # Return response with updated artist details
         return jsonify(artist.read())
     
     def delete(self):

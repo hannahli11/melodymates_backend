@@ -94,55 +94,48 @@ class Post(db.Model):
             "channel_name": channel.name if channel else None
         }
         return data
-    
+     
 
-    def update(self):
+    def update(self, post_data):
         """
         Updates the post object with new data.
         
         Args:
-            inputs (dict): A dictionary containing the new data for the post.
+            post_data (dict): A dictionary containing the new data for the post.
         
         Returns:
             Post: The updated post object, or None on error.
         """
-        
-        inputs = Post.query.get(self.id)
-        
-        title = inputs._title
-        content = inputs._content
-        channel_id = inputs._channel_id
-        user_name = User.query.get(inputs._user_id).name if inputs._user_id else None
-        channel_name = Channel.query.get(inputs._channel_id).name if inputs._channel_id else None
+        title = post_data.get('title')
+        comment = post_data.get('comment')
+        content = post_data.get('content')
+        user_name = post_data.get('user_name')
+        channel_name = post_data.get('channel_name')
 
-        # If channel_name is provided, look up the corresponding channel_id
-        if channel_name:
-            channel = Channel.query.filter_by(_name=channel_name).first()
-            if channel:
-                channel_id = channel.id
-                
-        if user_name:
-            user = User.query.filter_by(_name=user_name).first()
-            if user:
-                user_id = user.id
-            else:
-                return None
-
-        # Update table with new data
+        # Handle the optional fields
         if title:
             self._title = title
-        if content:
+        if comment:
+            self._comment = comment
+        if content is not None:
             self._content = content
-        if channel_id:
-            self._channel_id = channel_id
-        if user_id:
-            self._user_id = user_id
+
+        # Look up user and channel based on names
+        if user_name:
+            user = User.query.filter_by(name=user_name).first()
+            if user:
+                self._user_id = user.id
+
+        if channel_name:
+            channel = Channel.query.filter_by(name=channel_name).first()
+            if channel:
+                self._channel_id = channel.id
 
         try:
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
-            logging.warning(f"IntegrityError: Could not update post with title '{title}' due to missing channel_id.")
+            logging.warning(f"IntegrityError: Could not update post with title '{title}' due to missing user or channel.")
             return None
         return self
     
@@ -165,17 +158,30 @@ class Post(db.Model):
         
     @staticmethod
     def restore(data):
+        """
+        Restores posts from provided data, updating existing ones or creating new posts.
+        
+        Args:
+            data (list): A list of dictionaries containing post data.
+        
+        Returns:
+            list: A list of restored post dictionaries.
+        """
+        restored_records = []
         for post_data in data:
             _ = post_data.pop('id', None)  # Remove 'id' from post_data
             title = post_data.get("title", None)
             post = Post.query.filter_by(_title=title).first()
             if post:
-                post.update(post_data)
+                post.update(post_data)  # Pass post_data to the update method
+                restored_records.append(post.read())  # Store the updated post data
             else:
                 post = Post(**post_data)
-                post.update(post_data)
                 post.create()
-        
+                restored_records.append(post.read())  # Store the created post data
+        return restored_records
+
+
 def initPosts():
     """
     The initPosts function creates the Post table and adds tester data to the table.

@@ -213,6 +213,7 @@ def extract_data():
         data['channels'] = [channel.read() for channel in Channel.query.all()]
         data['posts'] = [post.read() for post in Post.query.all()]
         data['artinfo'] = [artist.read() for artist in ArtInfo.query.all()]
+        data['musicpref'] = [user.read() for user in MusicPref.query.all()]
     return data
 
 # Save extracted data to JSON files
@@ -241,7 +242,7 @@ def restore_data(data):
         _ = Channel.restore(data['channels'])
         _ = Post.restore(data['posts'])
         _ = ArtInfo.restore(data['artinfo'])
-        _ = MusicChat.restore(data['musicChats'])
+        _ = MusicPref.restore(data['musicpref'])
     print("Data restored to the new database.")
 
 # Define a command to backup data

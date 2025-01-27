@@ -212,7 +212,7 @@ def extract_data():
         data['groups'] = [group.read() for group in Group.query.all()]
         data['channels'] = [channel.read() for channel in Channel.query.all()]
         data['posts'] = [post.read() for post in Post.query.all()]
-        data['artinfos'] = [artist.read() for artist in ArtInfo.query.all()]
+        data['artinfo'] = [artist.read() for artist in ArtInfo.query.all()]
     return data
 
 # Save extracted data to JSON files

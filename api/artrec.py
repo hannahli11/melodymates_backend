@@ -104,8 +104,12 @@ class ArtInfoResource(Resource):
 
         # Validate favorites
         favorites = body.get('favorites', [])
-        if not isinstance(favorites, list):
-            return {'message': 'Favorites must be a list of artist names'}, 400
+        # Ensure favorites is a list, even if it's a single artist
+        if isinstance(favorites, str):
+            favorites = [favorites]  # Convert single artist to a list
+        elif not isinstance(favorites, list):
+            return {'message': 'Favorites must be a list of artist names or a single artist name'}, 400
+
 
         # Setup ArtInfo object
         artist = ArtInfo(name=name, uid=uid, favorites=favorites)

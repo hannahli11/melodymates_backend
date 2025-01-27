@@ -67,6 +67,9 @@ class MusicPref(db.Model, UserMixin):
             db.session.commit()
             return self
     def read(self):
+        """
+        Return the record as a dictionary (JSON-ready).
+        """
         return {
             'id': self.id,
             'uid': self.uid,
@@ -79,6 +82,9 @@ class MusicPref(db.Model, UserMixin):
             'important_aspect': self.important_aspect,
         }
     def update(self, inputs):
+        """
+        Update the MusicPref record in the database.
+        """
         if not isinstance(inputs, dict):
             return self
         self._name = inputs.get("name", self._name)
@@ -91,11 +97,17 @@ class MusicPref(db.Model, UserMixin):
         db.session.commit()
         return self
     def delete(self):
+        """
+        Delete the MusicPref record from the database.
+        """
         db.session.delete(self)
         db.session.commit()
 # Handling GET, POST, PUT, DELETE in API
 # POST - Create or Update a user
 def create_or_update_music_pref(data):
+    """
+    Create or update a MusicPref record in the database.
+    """
     uid = data.get("uid")
     user = MusicPref.query.filter_by(_uid=uid).first()
     if user:
@@ -107,6 +119,9 @@ def create_or_update_music_pref(data):
         return new_user.create()
 # GET - Get a user's data
 def get_music_pref(uid):
+    """
+    Retrieve a MusicPref record by UID.
+    """
     user = MusicPref.query.filter_by(_uid=uid).first()
     if user:
         return user.read()
@@ -114,6 +129,9 @@ def get_music_pref(uid):
         return None
 # PUT - Update an existing user's data
 def update_music_pref(uid, data):
+    """
+    Update a MusicPref record by UID.
+    """
     user = MusicPref.query.filter_by(_uid=uid).first()
     if user:
         return user.update(data)
@@ -121,6 +139,9 @@ def update_music_pref(uid, data):
         return None
 # DELETE - Delete a user from the database
 def delete_music_pref(uid):
+    """
+    Delete a MusicPref record by UID.
+    """
     user = MusicPref.query.filter_by(_uid=uid).first()
     if user:
         user.delete()
@@ -129,6 +150,9 @@ def delete_music_pref(uid):
         return False
 # Initialize with some test data
 def initMusicPref():
+    """
+    Initialize the database with test data.
+    """
     with app.app_context():
         db.create_all()
         u1 = MusicPref(name='Brandon Smurlo', uid='brandonsmurlo_08', favorites=['Travis Scott'],

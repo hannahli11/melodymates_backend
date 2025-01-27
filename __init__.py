@@ -40,14 +40,14 @@ DB_USERNAME = os.environ.get('DB_USERNAME') or None
 DB_PASSWORD = os.environ.get('DB_PASSWORD') or None
 if DB_ENDPOINT and DB_USERNAME and DB_PASSWORD:
     # Production - Use MySQL
-   
+
     DB_PORT = '3306'
     DB_NAME = dbName
     dbString = f'mysql+pymysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_ENDPOINT}:{DB_PORT}'
     dbURI =  dbString + '/' + dbName
     backupURI = None  # MySQL backup would require a different approach
 else:
-   
+
     # Development - Use SQLite
     dbString = 'sqlite:///volumes/'
     dbURI = dbString + dbName + '.db'

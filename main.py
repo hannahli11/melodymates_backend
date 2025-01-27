@@ -227,7 +227,7 @@ def save_data_to_json(data, directory='backup'):
 # Load data from JSON files
 def load_data_from_json(directory='backup'):
     data = {}
-    for table in ['users', 'sections', 'groups', 'channels', 'posts', 'artinfo']:
+    for table in ['users', 'musicChats' 'sections', 'groups', 'channels', 'posts', 'artinfo']:
         with open(os.path.join(directory, f'{table}.json'), 'r') as f:
             data[table] = json.load(f)
     return data
@@ -241,6 +241,7 @@ def restore_data(data):
         _ = Channel.restore(data['channels'])
         _ = Post.restore(data['posts'])
         _ = ArtInfo.restore(data['artinfo'])
+        _ = MusicChat.restore(data['musicChats'])
     print("Data restored to the new database.")
 
 # Define a command to backup data

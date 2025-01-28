@@ -1,9 +1,7 @@
-from flask import current_app
-from flask_sqlalchemy import SQLAlchemy
+from flask import current_app, request, jsonify
 from sqlalchemy.exc import IntegrityError
-
-# Initialize the database
-db = SQLAlchemy()
+from flask_login import UserMixin
+from __init__ import app, db
 
 class User(db.Model):
     __tablename__ = 'users'

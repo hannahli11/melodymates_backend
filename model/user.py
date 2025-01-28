@@ -1,4 +1,3 @@
-# user.py
 from flask import current_app
 from flask_login import UserMixin
 from datetime import date
@@ -10,25 +9,6 @@ import json
 
 from __init__ import app, db
 
-
-""" Helper Functions """
-
-
-def default_year():
-    """
-    Returns the default year for user enrollment based on the current month.
-   
-    If the current month is between August (8) and December (12), the enrollment year is the next year.
-    Otherwise, it is the current year.
-   
-    Returns:
-        int: The default year for user enrollment.
-    """
-    current_month = date.today().month
-    current_year = date.today().year
-    if 7 <= current_month <= 12:
-        current_year += 1
-    return current_year
 
 
 """ Database Models """
@@ -542,7 +522,7 @@ def initUsers():
         db.create_all()
         """Tester data for table"""
        
-        u1 = User(name='Thomas Edison', uid=app.config['ADMIN_USER'], password=app.config['ADMIN_PASSWORD'], pfp='toby.png', car='toby_car.png', role="Admin")
+        u1 = User(name='Thomas Edison', uid=app.config['ADMIN_USER'], password=app.config['ADMIN_PASSWORD'], pfp='`toby`.png', car='toby_car.png', role="Admin")
         u2 = User(name='Grace Hopper', uid=app.config['DEFAULT_USER'], password=app.config['DEFAULT_PASSWORD'], pfp='hop.png')
         u3 = User(name='Nicholas Tesla', uid='niko', password='123niko', pfp='niko.png' )
         users = [u1, u2, u3]

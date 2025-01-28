@@ -28,10 +28,12 @@ from api.messages_api import messages_api # Adi added this, messages for his web
 from api.carphoto import car_api
 from api.carChat import car_chat_api
 from api.student import student_api
-from api.usermatching import usermatching_api
+from api.usermatching import usermatching_api # Justin added this, custom format for his website
+
+
 from api.artrec import artrec_api
 from api.musicChat import musicChat_api
-from api.profilematching import profilematching_api
+
 from api.information import information_api
 from api.public_profile import profile_api
 
@@ -43,11 +45,14 @@ from model.section import Section, initSections
 from model.group import Group, initGroups
 from model.channel import Channel, initChannels
 from model.post import Post, initPosts
-from model.musicChat import MusicChat
+from model.musicChat import MusicChat, initMusicChats
 from model.nestPost import NestPost, initNestPosts # Justin added this, custom format for his website
 from model.vote import Vote, initVotes
 from model.artInfo import ArtInfo, initArtinfo
-from model.public_profile_data import PublicProfile, initPublicProfile
+from model.musicpref import MusicPref, initMusicPref
+from model.censor import Censor, initCensor
+# from model.UserMatch import UserMatch, initUserMatch
+
 # server only Views
 
 # register URIs for api endpoints
@@ -69,10 +74,11 @@ app.register_blueprint(vote_api)
 app.register_blueprint(car_api)
 app.register_blueprint(student_api)
 app.register_blueprint(artrec_api)
-app.register_blueprint(profilematching_api)
+
 app.register_blueprint(musicChat_api)
 app.register_blueprint(information_api)
 app.register_blueprint(profile_api)
+app.register_blueprint(usermatching_api)
 
 # Tell Flask-Login the view function name of your login route
 login_manager.login_view = "login"
@@ -173,6 +179,7 @@ custom_cli = AppGroup('custom', help='Custom commands')
 # Define a command to run the data generation functions
 @custom_cli.command('generate_data')
 def generate_data():
+    initArtinfo()
     initUsers()
     initSections()
     initGroups()
@@ -180,7 +187,10 @@ def generate_data():
     initNestPosts()
     initVotes()
     initArtinfo()
-    initPublicProfile()
+    initMusicPref()
+    initMusicChats()
+    initCensor()
+    # initUserMatch() 
     
 # Backup the old database
 def backup_database(db_uri, backup_uri):
@@ -202,6 +212,8 @@ def extract_data():
         data['groups'] = [group.read() for group in Group.query.all()]
         data['channels'] = [channel.read() for channel in Channel.query.all()]
         data['posts'] = [post.read() for post in Post.query.all()]
+        data['artinfo'] = [artist.read() for artist in ArtInfo.query.all()]
+        data['musicpref'] = [user.read() for user in MusicPref.query.all()]
     return data
 
 # Save extracted data to JSON files
@@ -216,7 +228,7 @@ def save_data_to_json(data, directory='backup'):
 # Load data from JSON files
 def load_data_from_json(directory='backup'):
     data = {}
-    for table in ['users', 'sections', 'groups', 'channels', 'posts']:
+    for table in ['users', 'musicChats' 'sections', 'groups', 'channels', 'posts', 'artinfo']:
         with open(os.path.join(directory, f'{table}.json'), 'r') as f:
             data[table] = json.load(f)
     return data
@@ -229,6 +241,8 @@ def restore_data(data):
         _ = Group.restore(data['groups'], users)
         _ = Channel.restore(data['channels'])
         _ = Post.restore(data['posts'])
+        _ = ArtInfo.restore(data['artinfo'])
+        _ = MusicPref.restore(data['musicpref'])
     print("Data restored to the new database.")
 
 # Define a command to backup data

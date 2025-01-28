@@ -2,34 +2,46 @@ from sqlite3 import IntegrityError
 from __init__ import app, db
 from model.user import User
 
-class MusicChat(db.Model): # defiintion for data table 
+class MusicChat(db.Model):
+    """
+    MusicChat Model
+
+    Represents a music chat message.
+    
+    Attributes:
+        id (db.Column): The primary key, an integer.
+        _message (db.Column): A string representing the message content.
+        _user_id (db.Column): A foreign key referencing the user ID.
+    """
     __tablename__ = 'musicChats'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True) # parameter 1
-    _message = db.Column(db.String(255), nullable=False) #parameter 2
-    _user_id = db.Column('user_id', db.Integer, db.ForeignKey('users.id')) # pearameter 3
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    _message = db.Column(db.String(255), nullable=False)
+    _user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __init__(self, message, user_id):
         """
-        Constructor, 1st step in object creation.
+        Constructor to initialize a MusicChat object.
         
         Args:
             message (str): The message content.
-            user_id (int): The user ID of the person who sent the message.
+            user_id (int): The user ID of the sender.
         """
         self._message = message
         self._user_id = user_id
 
-    @property
-    def message(self):
-        return self._message
+    def __repr__(self):
+        """
+        String representation of the object.
+        
+        Returns:
+            str: The string representation of the object.
+        """
+        return f"MusicChat(id={self.id}, message='{self._message}', user_id={self._user_id})"
 
     def create(self):
         """
-        The create method adds the object to the database and commits the transaction.
-        
-        Uses:
-            The db ORM methods to add and commit the transaction.
+        Adds the object to the database and commits the transaction.
         
         Raises:
             Exception: An error occurred when adding the object to the database.
@@ -43,7 +55,7 @@ class MusicChat(db.Model): # defiintion for data table
 
     def read(self):
         """
-        The read method retrieves the object data from the object's attributes and returns it as a dictionary.
+        Retrieves the object data and returns it as a dictionary.
         
         Returns:
             dict: A dictionary containing the music chat data.
@@ -53,3 +65,35 @@ class MusicChat(db.Model): # defiintion for data table
             'message': self._message,
             'user_id': self._user_id,
         }
+
+def initMusicChats():
+    """
+    The initMusicChats function creates the MusicChat table and adds tester data to the table.
+
+    Uses:
+        The db ORM methods to create the table.
+
+    Instantiates:
+        MusicChat objects with tester data.
+
+    Raises:
+        IntegrityError: An error occurred when adding the tester data to the table.
+    """
+    with app.app_context():
+        """Create database and tables"""
+        db.create_all()
+        """Tester data for table"""
+        
+        mc1 = MusicChat(message="This song is amazing!", user_id=1)
+        mc2 = MusicChat(message="Anyone got suggestions for new tracks?", user_id=2)
+        mc3 = MusicChat(message="Loving this playlist!", user_id=3)
+        mc4 = MusicChat(message="Does anyone know the lyrics to this song?", user_id=4)
+        mc5 = MusicChat(message="Check out the latest release from my favorite artist!", user_id=5)
+        messages = [mc1, mc2, mc3, mc4, mc5]
+
+        for message in messages:
+            try:
+                message.create()
+            except IntegrityError:
+                """Fails with bad or duplicate data"""
+                db.session.remove()

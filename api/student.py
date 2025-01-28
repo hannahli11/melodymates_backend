@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify, Flask, request
 from flask_restful import Api, Resource  # Used for REST API building
 from flask_cors import CORS
 
+from model.artInfo import ArtInfo
+
 # Initialize Flask app and Blueprint
 student_api = Blueprint('student_api', __name__, url_prefix='/api')
 app = Flask(__name__)
@@ -102,3 +104,4 @@ app.register_blueprint(student_api)
 
 if __name__ == "__main__":
     app.run(debug=True)
+

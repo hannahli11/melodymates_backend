@@ -5,8 +5,8 @@ from __init__ import app, db
 
 
 
-class ArtInfo(db.Model, UserMixin):
-    __tablename__ = 'artinfo'
+class ChatData(db.Model, UserMixin):
+    __tablename__ = 'chatdata'
 
     id = db.Column(db.Integer, primary_key=True)
     _name = db.Column(db.String(255), nullable=False)  # User's name
@@ -45,33 +45,9 @@ class ArtInfo(db.Model, UserMixin):
         return False
 
     def create(self):
-        # Check if user already exists
-        existing_user = ArtInfo.query.filter_by(_uid=self._uid).first()
-
-        if existing_user:
-            # Update the existing user's data
-            existing_user._name = self._name
-            existing_user._uid = self._uid
-            existing_user._favorites = self._favorites
-            db.session.commit()
-            return existing_user
-        else:
-            # If user doesn't exist, create a new user
-            db.session.add(self)
-            db.session.commit()
-            return self
-        
-    def create_or_update_art_info(data):
-        uid = data.get("uid")
-        artist = ArtInfo.query.filter_by(_uid=uid).first()
-    
-        if artist:
-        # If user exists, update the record
-            return artist.update(data)
-        else:
-        # If user doesn't exist, create a new record
-            new_artist = ArtInfo(**data)
-            return new_artist.create()
+        db.session.add(self)
+        db.session.commit()
+        return self
 
     def read(self):
         return {
@@ -96,39 +72,23 @@ class ArtInfo(db.Model, UserMixin):
         db.session.commit()
         return self
 
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
-        
+        def delete(self):
+            db.session.delete(self)
+            db.session.commit()
+    
     @staticmethod
     def restore(data):
-        """
-        Synchronizes the provided data with the ArtInfo database.
-        Updates existing records or creates new ones.
-        """
-        restored_records = []
-        for art_data in data:
-            id = art_data.get("id")  # Fetch the id from the provided data
-            record = ArtInfo.query.filter_by(id=id).first()
-
-            if record:
-                # Update the existing record
-                record.update(art_data)
-                restored_records.append(record.read())
+        artists = {}
+        for ArtInfo_data in data:
+            id = ArtInfo_data.get("id")
+            comment = ArtInfo.query.filter_by(id=id).first()
+            if comment:
+                comment.update(ArtInfo_data)
             else:
-                # Create a new record if it doesn't exist
-                try:
-                    new_record = ArtInfo(
-                        name=art_data.get("name"),
-                        uid=art_data.get("uid"),
-                        favorites=art_data.get("favorites", [])
-                    )
-                    new_record.create()
-                    restored_records.append(new_record.read())
-                except IntegrityError as e:
-                    db.session.rollback()  # Rollback the session in case of any error
-                    print(f"Error restoring record with uid {art_data.get('uid')}: {e}")
-        return restored_records
+                print(ArtInfo_data)
+                artist = ArtInfo(ArtInfo_data.get("id"), ArtInfo_data.get("uid"), ArtInfo_data.get("name"), ArtInfo_data.get("favorites"))
+                artist.create()
+        return artists
 
 
 # Initialization function to add test data

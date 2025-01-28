@@ -51,6 +51,7 @@ from model.vote import Vote, initVotes
 from model.artInfo import ArtInfo, initArtinfo
 from model.musicpref import MusicPref, initMusicPref
 from model.censor import Censor, initCensor
+from model.publicProfileData import PublicProfile, initPublicProfile
 # from model.UserMatch import UserMatch, initUserMatch
 
 # server only Views
@@ -190,6 +191,7 @@ def generate_data():
     initMusicPref()
     initMusicChats()
     initCensor()
+    initPublicProfile()
     # initUserMatch() 
     
 # Backup the old database

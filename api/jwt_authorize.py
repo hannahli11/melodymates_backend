@@ -3,6 +3,8 @@ from flask import current_app, g
 from functools import wraps
 import jwt
 from model.user import User
+from model.publicProfileData import PublicProfile
+
 
 def token_required(roles=None):
     """
@@ -41,7 +43,7 @@ def token_required(roles=None):
 
             try:
                 data = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])
-                current_user = User.query.filter_by(_uid=data["_uid"]).first()
+                current_user = PublicProfile.query.filter_by(_uid=data["_uid"]).first()
                 if not current_user:
                     return {
                         "message": "User not found",

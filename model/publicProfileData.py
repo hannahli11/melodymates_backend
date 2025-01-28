@@ -79,6 +79,23 @@ class PublicProfile(db.Model, UserMixin):
         """Add this user object to the database"""
         db.session.add(self)
         db.session.commit()
+        
+    def read(self):
+        """
+        Converts the user object to a dictionary.
+       
+        Returns:
+            dict: A dictionary representation of the user object.
+        """
+        data = {
+            "name": self._name,
+            "uid": self._uid,
+            "pfp": self._pfp,
+            "bio": self._bio,
+            "favorite_artist": self._favorite_artist
+        }
+        return data
+
 
     def update(self, inputs):
         """Update the user object with new data"""
@@ -117,7 +134,7 @@ def initPublicProfile():
         for user in users:
             try:
                 user.create()
-                print(f"User {user._name} created successfully.")
+                print(f"User SDKJFHSDLKJFGHAKJDFHGLKJSDFHGLKJHF {user._name} created successfully.")
             except IntegrityError:
                 db.session.rollback()
                 print(f"Error or duplicate entry: {user._uid}")

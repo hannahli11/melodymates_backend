@@ -93,7 +93,7 @@ class MusicChat(db.Model):
                     restored_records.append(new_record.read())
                 except IntegrityError as e:
                     db.session.rollback()  # Rollback the session in case of any error
-                    print(f"Error restoring record with uid {art_data.get('uid')}: {e}")
+                    print(f"Error restoring record with uid {music_chat.get('uid')}: {e}")
         return restored_records
 
 

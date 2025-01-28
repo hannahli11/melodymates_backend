@@ -69,13 +69,13 @@ class MusicChat(db.Model):
 def initMusicChats():
     """
     The initMusicChats function creates the MusicChat table and adds tester data to the table.
-   
+
     Uses:
         The db ORM methods to create the table.
-   
+
     Instantiates:
         MusicChat objects with tester data.
-   
+
     Raises:
         IntegrityError: An error occurred when adding the tester data to the table.
     """
@@ -90,7 +90,7 @@ def initMusicChats():
         mc4 = MusicChat(message="Does anyone know the lyrics to this song?", user_id=4)
         mc5 = MusicChat(message="Check out the latest release from my favorite artist!", user_id=5)
         messages = [mc1, mc2, mc3, mc4, mc5]
-       
+
         for message in messages:
             try:
                 message.create()

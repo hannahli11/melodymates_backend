@@ -65,6 +65,37 @@ class MusicChat(db.Model):
             'message': self._message,
             'user_id': self._user_id,
         }
+        
+    @staticmethod
+    def restore(data):
+        """
+        Synchronizes the provided data with the musicChat database.
+        Updates existing records or creates new ones.
+        """
+        restored_records = []
+        for music_chat in data:
+            id = music_chat.get("id")  # Fetch the id from the provided data
+            record = musicChat.query.filter_by(id=id).first()
+
+            if record:
+                # Update the existing record
+                record.update(music_chat)
+                restored_records.append(record.read())
+            else:
+                # Create a new record if it doesn't exist
+                try:
+                    new_record = musicChat(
+                        name=music_chat.get("name"),
+                        uid=music_chat.get("uid"),
+                        favorites=music_chat.get("favorites", [])
+                    )
+                    new_record.create()
+                    restored_records.append(new_record.read())
+                except IntegrityError as e:
+                    db.session.rollback()  # Rollback the session in case of any error
+                    print(f"Error restoring record with uid {music_chat.get('uid')}: {e}")
+        return restored_records
+
 
 def initMusicChats():
     """
@@ -97,3 +128,4 @@ def initMusicChats():
             except IntegrityError:
                 """Fails with bad or duplicate data"""
                 db.session.remove()
+

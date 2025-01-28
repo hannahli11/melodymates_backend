@@ -128,4 +128,3 @@ def initMusicChats():
             except IntegrityError:
                 """Fails with bad or duplicate data"""
                 db.session.remove()
-

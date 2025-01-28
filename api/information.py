@@ -154,6 +154,8 @@ class MusicPrefResource(Resource):
     def put(self):
         body = request.get_json()
 
+
+        print(body)
         if not body:
             return {'message': 'No data provided'}, 400
 
@@ -170,14 +172,15 @@ class MusicPrefResource(Resource):
 
     def delete(self):
         body = request.get_json()
-        uid = body.get('uid')
-
-        music_pref = MusicPref.query.filter_by(_uid=uid).first()
+        id = body.get('id')
+        print(body)
+        music_pref = MusicPref.query.filter_by(id=id).first()
         if music_pref is None:
-            return {'message': f'Music preference with UID {uid} not found'}, 404
+            print("BAD: CANT FIND MUSIC PREF")
+            return jsonify({'message': f'Music preference with id {id} not found', "deleted": False})
 
         music_pref.delete()
-        return f"Deleted MusicPreference record: {music_pref.read()}", 204
+        return jsonify({"message": f"Deleted MusicPreference record: {music_pref.read()}", "deleted": False})
 
 
 api.add_resource(HannahResource, '/data/Hannah')

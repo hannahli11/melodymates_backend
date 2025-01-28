@@ -47,6 +47,7 @@ from model.musicChat import MusicChat
 from model.nestPost import NestPost, initNestPosts # Justin added this, custom format for his website
 from model.vote import Vote, initVotes
 from model.artInfo import ArtInfo, initArtinfo
+from model.public_profile_data import PublicProfile, initPublicProfile
 # server only Views
 
 # register URIs for api endpoints
@@ -179,6 +180,7 @@ def generate_data():
     initNestPosts()
     initVotes()
     initArtinfo()
+    initPublicProfile()
     
 # Backup the old database
 def backup_database(db_uri, backup_uri):

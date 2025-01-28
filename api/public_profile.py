@@ -24,11 +24,16 @@ class ProfileAPI:
         API for Create, Read, Update, Delete operations on the PublicProfile model.
         """
 
+        # def post(self):
+        #     return "jamal"
+        
         def post(self):
             """
             Create a new public profile.
             """
             body = request.get_json()
+            
+            print(body)
 
             # Validate name
             name = body.get('name')
@@ -49,9 +54,11 @@ class ProfileAPI:
                 favorite_artist=body.get('favorite_artist', '')
             )
 
-            profile = profile_obj.create(body)  # pass the body elements to be saved in the database
+            profile = profile_obj.create()  # pass the body elements to be saved in the database
             if not profile:  # failure returns error message
                 return {'message': f'Processed {name}, either a format error or User ID {uid} is duplicate'}, 400
+            
+            return jsonify(profile.read())
 
         @token_required
         def get(self):

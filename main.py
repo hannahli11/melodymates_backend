@@ -79,6 +79,7 @@ app.register_blueprint(artrec_api)
 app.register_blueprint(musicChat_api)
 app.register_blueprint(information_api)
 app.register_blueprint(profile_api)
+print("REGISTERED PROFILE BLUEPRINT")
 app.register_blueprint(usermatching_api)
 
 # Tell Flask-Login the view function name of your login route

@@ -120,20 +120,20 @@ class ArtInfoResource(Resource):
         return jsonify(artist.read())
 
 
-    def get(self):
-        """
-        Retrieves all artist records from the database.
-        """
-        artists = ArtInfo.query.all()  # Fetch all records
+        def get(self):
+            """
+            Retrieves all artist records from the database.
+            """
+            artists = ArtInfo.query.all()  # Fetch all records
 
-        # Prepare a list of dictionaries
-        json_ready = []
-        for artist in artists:
-            artist_data = artist.read()
-            json_ready.append(artist_data)
+            # Prepare a list of dictionaries
+            json_ready = []
+            for artist in artists:
+                artist_data = artist.read()
+                json_ready.append(artist_data)
 
-        return jsonify(json_ready)  
-    
+            return jsonify(json_ready)  
+        
     def put(self):
         """
         Update artist details.

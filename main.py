@@ -51,6 +51,7 @@ from model.vote import Vote, initVotes
 from model.artInfo import ArtInfo, initArtinfo
 from model.musicpref import MusicPref, initMusicPref
 from model.censor import Censor, initCensor
+from model.publicProfileData import PublicProfile, initPublicProfile
 # from model.UserMatch import UserMatch, initUserMatch
 
 # server only Views
@@ -190,6 +191,7 @@ def generate_data():
     initMusicPref()
     initMusicChats()
     initCensor()
+    initPublicProfile()
     # initUserMatch() 
     
 # Backup the old database
@@ -213,6 +215,7 @@ def extract_data():
         data['channels'] = [channel.read() for channel in Channel.query.all()]
         data['posts'] = [post.read() for post in Post.query.all()]
         data['artinfo'] = [artist.read() for artist in ArtInfo.query.all()]
+        data['musicChat'] = [chat.read() for chat in MusicChat.query.all()]
         data['musicpref'] = [user.read() for user in MusicPref.query.all()]
     return data
 
@@ -228,7 +231,7 @@ def save_data_to_json(data, directory='backup'):
 # Load data from JSON files
 def load_data_from_json(directory='backup'):
     data = {}
-    for table in ['users', 'musicChats' 'sections', 'groups', 'channels', 'posts', 'artinfo']:
+    for table in ['users', 'musicChats', 'sections', 'groups', 'channels', 'posts', 'artinfo']:
         with open(os.path.join(directory, f'{table}.json'), 'r') as f:
             data[table] = json.load(f)
     return data
@@ -242,7 +245,7 @@ def restore_data(data):
         _ = Channel.restore(data['channels'])
         _ = Post.restore(data['posts'])
         _ = ArtInfo.restore(data['artinfo'])
-        _ = MusicPref.restore(data['musicpref'])
+        _ = MusicChat.restore(data['musicChats'])
     print("Data restored to the new database.")
 
 # Define a command to backup data

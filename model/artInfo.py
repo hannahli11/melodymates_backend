@@ -139,10 +139,9 @@ def initArtinfo():
     with app.app_context():
         db.create_all() 
         # Tester data for ArtInfo
-        u1 = ArtInfo(name='Hannah Li', uid='hannahli_11', favorites=['Travis Scott', 'Metro Boomin'])
-        u2 = ArtInfo(name='Brandon Smurlo', uid='bsmurlo', favorites=['Bob Marley'])
-        u3 = ArtInfo(name='Rhea Rajashakhar', uid='rhear_02', favorites=['Don Toliver'])
-        artists = [u1, u2, u3]
+        u1 = ArtInfo(name='Brandon Smurlo', uid='bsmurlo', favorites=['Bob Marley'])
+        u2 = ArtInfo(name='Rhea Rajashakhar', uid='rhear_02', favorites=['Don Toliver'])
+        artists = [u1, u2]
 
     for artist in artists:
             try:

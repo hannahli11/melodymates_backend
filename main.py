@@ -76,7 +76,7 @@ app.register_blueprint(car_api)
 app.register_blueprint(student_api)
 app.register_blueprint(artrec_api)
 
-app.register_blueprint(musicChat_api)
+app.register_blueprint(musicChat_api, url_prefix='/api/unique_musicChat')
 app.register_blueprint(information_api)
 app.register_blueprint(profile_api)
 print("REGISTERED PROFILE BLUEPRINT")
@@ -218,6 +218,7 @@ def extract_data():
         data['artinfo'] = [artist.read() for artist in ArtInfo.query.all()]
         data['musicChat'] = [chat.read() for chat in MusicChat.query.all()]
         data['musicpref'] = [user.read() for user in MusicPref.query.all()]
+        data['censor'] = [censor.read() for censor in Censor.query.all()]
     return data
 
 # Save extracted data to JSON files
@@ -247,6 +248,7 @@ def restore_data(data):
         _ = Post.restore(data['posts'])
         _ = ArtInfo.restore(data['artinfo'])
         _ = MusicChat.restore(data['musicChats'])
+        _ = Censor.restore(data['censor'])
     print("Data restored to the new database.")
 
 # Define a command to backup data

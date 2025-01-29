@@ -272,26 +272,3 @@ if __name__ == "__main__":
     # change name for testing
     app.run(debug=True, host="0.0.0.0", port="8887")
 
-'''@app.route('/api/user-status', methods=['POST'])
-def store_user_status():
-    # Parse JSON data from request body
-    data = request.get_json()
-
-    # Validate that required fields exist in the incoming JSON
-    if not all(key in data for key in ["username", "decision"]):
-        return jsonify({"error": "Missing 'username' or 'decision' field"}), 400
-
-    # Add the data to the simulated database
-    user_status_db.append({
-        "username": data["username"],
-        "decision": data["decision"]  # 'approved' or 'rejected'
-    })
-
-    return jsonify({"message": "Decision stored successfully!", "data": user_status_db}), 200
-
-# Route to retrieve all user decisions
-@app.route('/api/user-status', methods=['GET'])
-def get_user_status():
-    jsonify(user_status_db) '''
-
-

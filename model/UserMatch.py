@@ -1,15 +1,19 @@
-from flask import current_app, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from flask import current_app
 from sqlalchemy.exc import IntegrityError
-from flask_login import UserMixin
-from __init__ import app, db
+
+db = SQLAlchemy()
 
 class User(db.Model):
-    __tablename__ = 'users'
+    """
+    SQLAlchemy model for storing user data with music preferences and bio.
+    """
+    __tablename__ = 'users'  # Ensures the table is registered as 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=False)  # User's name
-    preferences = db.Column(db.JSON, nullable=False)  # Store preferences as JSON
-    bio = db.Column(db.Text, nullable=False)          # User bio
+    name = db.Column(db.String(255), nullable=False, unique=True)  # User's name
+    preferences = db.Column(db.JSON, nullable=False)  # Stores Yes/No responses for songs
+    bio = db.Column(db.Text, nullable=False)  # Short bio of the user
 
     def __init__(self, name, preferences, bio):
         self.name = name
@@ -17,17 +21,35 @@ class User(db.Model):
         self.bio = bio
 
     def create(self):
+        """
+        Adds the current user to the database.
+        """
         try:
             db.session.add(self)
             db.session.commit()
             return self
-        except IntegrityError as e:
+        except IntegrityError:
             db.session.rollback()
-            raise Exception(f"Error creating user: {e}")
+            raise Exception(f"User '{self.name}' already exists.")
+
+    def update_preferences(self, new_preferences):
+        """
+        Updates user preferences (Yes/No responses).
+        """
+        self.preferences = new_preferences
+        db.session.commit()
+
+    
+    def delete(self):
+        """
+        Deletes the user from the database.
+        """
+        db.session.delete(self)
+        db.session.commit()
 
     def read(self):
         """
-        Converts the user object to a dictionary format for the API.
+        Converts the user object to a dictionary.
         """
         return {
             "id": self.id,
@@ -36,26 +58,6 @@ class User(db.Model):
             "bio": self.bio
         }
 
-    def update(self, data):
-        """
-        Updates the user's details.
-        """
-        if "name" in data:
-            self.name = data["name"]
-        if "preferences" in data:
-            self.preferences = data["preferences"]
-        if "bio" in data:
-            self.bio = data["bio"]
-        db.session.commit()
-        return self
-
-    def delete(self):
-        """
-        Deletes the user from the database.
-        """
-        db.session.delete(self)
-        db.session.commit()
-
     @staticmethod
     def get_user_by_name(name):
         """
@@ -63,61 +65,75 @@ class User(db.Model):
         """
         return User.query.filter_by(name=name).first()
 
-# Initialization function to add sample data
+    @staticmethod
+    def get_all_users():
+        """
+        Retrieve all users.
+        """
+        return [user.read() for user in User.query.all()]
+
+# Function to initialize the database with static data
 def init_users():
     with current_app.app_context():
         db.create_all()
-        # Sample users
-        users = [
-            User(
-                name="Hannah",
-                preferences={
+
+        # Static user data initialization
+        static_users = [
+            {
+                "name": "Hannah",
+                "preferences": {
                     "Black Star - Radiohead": "No",
                     "Sicko Mode - Travis Scott": "Yes",
                     "Bad Guy - Billie Eilish": "No",
                     "No Tears Left to Cry - Ariana Grande": "Yes",
                     "Ex-Factor - Lauryn Hill": "No"
                 },
-                bio="Hannah loves pop music and high-energy beats."
-            ),
-            User(
-                name="Rhea",
-                preferences={
+                "bio": "Hannah loves pop music and high-energy beats."
+            },
+            {
+                "name": "Rhea",
+                "preferences": {
                     "Black Star - Radiohead": "Yes",
                     "Sicko Mode - Travis Scott": "No",
                     "Bad Guy - Billie Eilish": "Yes",
                     "No Tears Left to Cry - Ariana Grande": "No",
                     "Ex-Factor - Lauryn Hill": "Yes"
                 },
-                bio="Rhea enjoys soulful tunes and lyrical depth."
-            ),
-            User(
-                name="Carson",
-                preferences={
+                "bio": "Rhea enjoys soulful tunes and lyrical depth."
+            },
+            {
+                "name": "Carson",
+                "preferences": {
                     "Black Star - Radiohead": "No",
                     "Sicko Mode - Travis Scott": "Yes",
                     "Bad Guy - Billie Eilish": "No",
                     "No Tears Left to Cry - Ariana Grande": "Yes",
                     "Ex-Factor - Lauryn Hill": "No"
                 },
-                bio="Carson is into upbeat tracks and modern hits."
-            ),
-            User(
-                name="Rowan",
-                preferences={
+                "bio": "Carson is into upbeat tracks and modern hits."
+            },
+            {
+                "name": "Rowan",
+                "preferences": {
                     "Black Star - Radiohead": "Yes",
                     "Sicko Mode - Travis Scott": "No",
                     "Bad Guy - Billie Eilish": "Yes",
                     "No Tears Left to Cry - Ariana Grande": "No",
                     "Ex-Factor - Lauryn Hill": "Yes"
                 },
-                bio="Rowan loves alternative and indie music."
-            )
+                "bio": "Rowan loves alternative and indie music."
+            }
         ]
 
-        for user in users:
-            try:
-                user.create()
-                print(f"Added user {user.name} successfully.")
-            except Exception as e:
-                print(f"Error adding user {user.name}: {e}")
+        for user_data in static_users:
+            if not User.get_user_by_name(user_data["name"]):  # Avoid duplicates
+                user = User(
+                    name=user_data["name"],
+                    preferences=user_data["preferences"],
+                    bio=user_data["bio"]
+                )
+                try:
+                    user.create()
+                    print(f"Added user {user.name} successfully.")
+                except Exception as e:
+                    print(f"Error adding user {user.name}: {e}")

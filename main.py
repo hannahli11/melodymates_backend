@@ -28,7 +28,7 @@ from api.messages_api import messages_api # Adi added this, messages for his web
 from api.carphoto import car_api
 from api.carChat import car_chat_api
 from api.student import student_api
-from api.usermatching import usermatching_api # Justin added this, custom format for his website
+# from api.usermatching import usermatching_api # Justin added this, custom format for his website
 
 
 from api.artrec import artrec_api
@@ -80,7 +80,7 @@ app.register_blueprint(musicChat_api, url_prefix='/api/unique_musicChat')
 app.register_blueprint(information_api)
 app.register_blueprint(profile_api)
 print("REGISTERED PROFILE BLUEPRINT")
-app.register_blueprint(usermatching_api)
+# app.register_blueprint(usermatching_api)
 
 # Tell Flask-Login the view function name of your login route
 login_manager.login_view = "login"

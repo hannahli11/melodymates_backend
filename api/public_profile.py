@@ -60,7 +60,7 @@ class ProfileAPI:
             
             return jsonify(profile.read())
 
-        @token_required
+        # @token_required
         def get(self):
             """
             Return the current user's profile as a JSON object.
@@ -79,42 +79,51 @@ class ProfileAPI:
 
 
 
-        @token_required
         def put(self):
             """
-            Update a public profile.
+            Update a public profile based on the UID provided in the request body.
             """
-            current_profile = g.current_user
             body = request.get_json()
-
-            # Allow admins to update other profiles
-            if current_profile and current_profile.uid == 'admin_user':  # Assuming 'admin_user' identifies admins
-                uid = body.get('uid')
-                if uid and uid != current_profile.uid:
-                    profile = PublicProfile.query.filter_by(_uid=uid).first()
-                    if not profile:
-                        return {'message': f"Profile with UID {uid} not found"}, 404
-                else:
-                    profile = current_profile  # Admin is updating their own profile
-            else:
-                profile = current_profile  # Regular users can only update their own profile
-
+            uid = body.get('uid')
+            
+            if not uid:
+                return {'message': "UID is required to update a profile."}, 400
+            
+            # Fetch profile using the UID
+            profile = PublicProfile.query.filter_by(_uid=uid).first()
+            
+            if not profile:
+                return {'message': f"Profile with UID {uid} not found"}, 404
+            
             # Update profile fields
             profile.update(body)
-            return jsonify(profile.__dict__)
+            
+            # Serialize the profile (exclude InstanceState)
+            profile_data = {column.name: getattr(profile, column.name) for column in profile.__table__.columns}
+            
+            return jsonify(profile_data)
 
-        @token_required
+
+        # @token_required
         def delete(self):
             """
-            Delete a public profile.
+            Delete a public profile based on the UID provided in the request body.
             """
-            current_profile = g.current_user
-            if not current_profile:
-                return {'message': 'No profile found to delete'}, 404
-
+            body = request.get_json()
+            uid = body.get('uid')
+            
+            if not uid:
+                return {'message': "UID is required to delete a profile."}, 400
+            
+            # Fetch profile using the UID
+            profile = PublicProfile.query.filter_by(_uid=uid).first()
+            
+            if not profile:
+                return {'message': f"Profile with UID {uid} not found"}, 404
+            
             try:
-                current_profile.delete()
-                return {'message': f"Profile {current_profile.uid} deleted successfully"}, 200
+                profile.delete()
+                return {'message': f"Profile {uid} deleted successfully"}, 200
             except Exception as e:
                 return {'message': f"Error occurred: {str(e)}"}, 500
 

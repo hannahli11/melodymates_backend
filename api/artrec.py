@@ -5,8 +5,8 @@ from flask_cors import CORS
 from model.artInfo import ArtInfo 
 
 artrec_api = Blueprint('artrec_api', __name__, url_prefix='/api')
-app = Flask(__name__)
-CORS(app, supports_credentials=True, origins='*')  
+# app = Flask(__name__)
+# CORS(app, supports_credentials=True, origins='*')  
 # API docs https://flask-restful.readthedocs.io/en/latest/
 api = Api(artrec_api)
 
@@ -126,6 +126,9 @@ class ArtInfoResource(Resource):
         """
         artists = ArtInfo.query.all()  # Fetch all records
 
+        if not artists:
+            return {'message': 'No artist records found'}, 404
+            
             # Prepare a list of dictionaries
         json_ready = []
         for artist in artists:

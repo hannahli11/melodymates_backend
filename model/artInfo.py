@@ -140,7 +140,7 @@ def initArtinfo():
         db.create_all() 
         # Tester data for ArtInfo
         u1 = ArtInfo(name='Brandon Smurlo', uid='bsmurlo', favorites=['Bob Marley'])
-        u2 = ArtInfo(name='Rhea Rajashakhar', uid='rhear_02', favorites=['Don Toliver'])
+        u2 = ArtInfo(name='Rhea Rajashekhar', uid='rhear_02', favorites=['Don Toliver'])
         artists = [u1, u2]
 
     for artist in artists:

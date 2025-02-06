@@ -1,7 +1,7 @@
 server {
         listen 80;
         listen [::]:80;
-        server_name melodymates.nighthawkcodingsociety.com;
+        server_name melodymates.stu.nighthawkcodingsociety.com;
 
         location / {
             proxy_pass http://localhost:8404;

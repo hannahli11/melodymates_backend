@@ -188,7 +188,7 @@ class ArtInfoResource(Resource):
         """ ArtInfo SQLAlchemy query returning a single record """
         artist = ArtInfo.query.filter_by(_uid=uid).first()
         
-        # Bad request: artist not found
+        # Bad request: artist not foun
         if artist is None:
             return {'message': f'ArtInfo record with UID {uid} not found'}, 404
         

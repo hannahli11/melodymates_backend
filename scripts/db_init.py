@@ -16,8 +16,8 @@ Or run from the root of the project:
 General Process outline:
 0. Warning to the user.
 1. Old data extraction.  An API has been created in the old project ...
-  - Extract Data: retrieves data from the specified tables in the old database.
-  - Transform Data: the API to JSON format understood by the new project.
+- Extract Data: retrieves data from the specified tables in the old database.
+- Transform Data: the API to JSON format understood by the new project.
 2. New schema.  The schema is created in "this" new database.
 3. Load Data: The bulk load API in "this" project inserts the data using required business logic.
 
@@ -63,7 +63,7 @@ def main():
                     
             # Backup the old database
             backup_database(app.config['SQLALCHEMY_DATABASE_URI'], app.config['SQLALCHEMY_BACKUP_URI'])
-           
+    
         except Exception as e:
             print(f"An error occurred: {e}")
             sys.exit(1)
@@ -85,6 +85,6 @@ def main():
     
     # Log success 
     print("Database initialized!")
- 
+
 if __name__ == "__main__":
     main()

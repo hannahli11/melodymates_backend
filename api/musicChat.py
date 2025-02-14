@@ -1,12 +1,10 @@
 from flask import Flask, Blueprint, jsonify, request
 from flask_restful import Api
-from flask_cors import CORS
-from __init__ import app, db
+from __init__ import app
 from model.musicChat import MusicChat  
 
 # Initialize a Blueprint for the music chat API
 musicChat_api = Blueprint('musicChat_api', __name__, url_prefix='/api/music_chat')
-CORS(app, supports_credentials=True, origins='*')  # Allow all origins (*)
 
 api = Api(musicChat_api)
 

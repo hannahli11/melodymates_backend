@@ -1,100 +1,83 @@
-from flask import Blueprint, jsonify, Flask
-from flask_restful import Api, Resource
-from flask_cors import CORS  # Handles cross-origin requests
-from model.musicpref import MusicPref
+# from flask import Flask, request, jsonify, Blueprint
+# from flask_restful import Api, Resource
+# from flask_cors import CORS
+# # from model.musicpref import User, db, init_users  # Import your model
 
-# Set up the Flask app and API
-usermatching_api = Blueprint('usermatching_api', __name__, url_prefix='/api')  # Blueprint for modular API
-app = Flask(__name__)
-CORS(app, supports_credentials=True, origins='*')  # Allows frontend to talk to the backend without issues
-api = Api(usermatching_api)  # Connect the API to the Blueprint
+# # Initialize Flask app
+# app = Flask(__name__)
+# CORS(app, supports_credentials=True, origins='*')
 
-# This is where we store all the user info (static data)
-class UserMatchingAPI:
-    @staticmethod
-    def get_user(name):
-        users = {
-            "Hannah": {
-                "preferences": {
-                    "Black Star - Radiohead": "No",
-                    "Sicko Mode - Travis Scott": "Yes",
-                    "Bad Guy - Billie Eilish": "No",
-                    "No Tears Left to Cry - Ariana Grande": "Yes",
-                    "Ex-Factor - Lauryn Hill": "No"
-                },
-                "bio": "Hannah loves pop music and high-energy beats."
-            },
-            "Rhea": {
-                "preferences": {
-                    "Black Star - Radiohead": "Yes",
-                    "Sicko Mode - Travis Scott": "No",
-                    "Bad Guy - Billie Eilish": "Yes",
-                    "No Tears Left to Cry - Ariana Grande": "No",
-                    "Ex-Factor - Lauryn Hill": "Yes"
-                },
-                "bio": "Rhea enjoys soulful tunes and lyrical depth."
-            },
-            "Carson": {
-                "preferences": {
-                    "Black Star - Radiohead": "No",
-                    "Sicko Mode - Travis Scott": "Yes",
-                    "Bad Guy - Billie Eilish": "No",
-                    "No Tears Left to Cry - Ariana Grande": "Yes",
-                    "Ex-Factor - Lauryn Hill": "No"
-                },
-                "bio": "Carson is into upbeat tracks and modern hits."
-            },
-            "Rowan": {
-                "preferences": {
-                    "Black Star - Radiohead": "Yes",
-                    "Sicko Mode - Travis Scott": "No",
-                    "Bad Guy - Billie Eilish": "Yes",
-                    "No Tears Left to Cry - Ariana Grande": "No",
-                    "Ex-Factor - Lauryn Hill": "Yes"
-                },
-                "bio": "Rowan loves alternative and indie music."
-            }
-        }
-        # Try to get the user data by name, or return None if not found
-        return users.get(name)
+# # Configure database connection
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///user_management.db'  # Uses user_management.db
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# db.init_app(app)
 
-# Each class below is basically an endpoint for one user's data
-class HannahResource(Resource):
-    def get(self):
-        user = UserMatchingAPI.get_user("Hannah")
-        if user:  # If we found the user, return their data
-            return jsonify(user)
-        return {"Data not found"}, 404  # If no data, send a 404 error
+# # Register Blueprint
+# usermatching_api = Blueprint('usermatching_api', __name__, url_prefix='/api')
+# api = Api(usermatching_api)
 
-class RheaResource(Resource):
-    def get(self):
-        user = UserMatchingAPI.get_user("Rhea")
-        if user:
-            return jsonify(user)
-        return {"Data not found"}, 404
+# # Initialize database
+# with app.app_context():
+#     db.create_all()
+#     init_users()
 
-class CarsonResource(Resource):
-    def get(self):
-        user = UserMatchingAPI.get_user("Carson")
-        if user:
-            return jsonify(user)
-        return {"Data not found"}, 404
+# # ✅ Get all users from the database
+# class AllUsersResource(Resource):
+#     def get(self):
+#         return jsonify(User.get_all_users())
 
-class RowanResource(Resource):
-    def get(self):
-        user = UserMatchingAPI.get_user("Rowan")
-        if user:
-            return jsonify(user)
-        return {"Data not found"}, 404
+# # ✅ Get a single user by name
+# class UserResource(Resource):
+#     def get(self, username):
+#         user = User.get_user_by_name(username)
+#         if user:
+#             return jsonify(user.read())
+#         return {"message": "User not found"}, 404
 
-# Add routes for each user. The URL will map to the right resource.
-api.add_resource(HannahResource, '/match/Hannah')  # /api/match/Hannah
-api.add_resource(RheaResource, '/match/Rhea')      # /a"Ex-Factor - Lauryn Hill"pi/match/Rhea
-api.add_resource(CarsonResource, '/match/Carson')  # /api/match/Carson
-api.add_resource(RowanResource, '/match/Rowan')    # /api/match/Rowan
+# # ✅ Edit a user's music preferences
+# class EditUserPreferences(Resource):
+#     def put(self, username):
+#         user = User.get_user_by_name(username)
+#         if not user:
+#             return {"message": "User not found"}, 404
+        
+#         data = request.get_json()
+#         if not data:
+#             return {"message": "No data provided"}, 400
+        
+#         # Update preferences only if the song exists in the original data structure
+#         valid_songs = [
+#             "Black Star - Radiohead", "Sicko Mode - Travis Scott",
+#             "Bad Guy - Billie Eilish", "No Tears Left to Cry - Ariana Grande",
+#             "Ex-Factor - Lauryn Hill"
+#         ]
+#         for song, response in data.items():
+#             if song in valid_songs and response in ["Yes", "No"]:
+#                 user.preferences[song] = response
 
-# Register the Blueprint with the Flask app
-app.register_blueprint(usermatching_api)
+#         db.session.commit()
+#         return jsonify(user.read())
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# # ✅ Delete a user
+# class DeleteUserResource(Resource):
+#     def delete(self, username):
+#         user = User.get_user_by_name(username)
+#         if not user:
+#             return {"message": "User not found"}, 404
+
+#         db.session.delete(user)
+#         db.session.commit()
+#         return {"message": f"User '{username}' deleted successfully"}
+
+# # Add API routes
+# api.add_resource(AllUsersResource, '/users')  # Get all users
+# api.add_resource(UserResource, '/match/<string:username>')  # Get single user
+# api.add_resource(EditUserPreferences, '/match/<string:username>')  # Edit preferences
+# api.add_resource(DeleteUserResource, '/match/<string:username>')  # Delete user
+
+# # Register API Blueprint
+# app.register_blueprint(usermatching_api)
+
+# # Run the Flask app
+# if __name__ == "__main__":
+#     app.run(debug=True)

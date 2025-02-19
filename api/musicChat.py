@@ -5,8 +5,16 @@ from model.musicChat import MusicChat
 
 # Initialize a Blueprint for the music chat API
 musicChat_api = Blueprint('musicChat_api', __name__, url_prefix='/api/music_chat')
+CORS(app, supports_credentials=True, origins='*')  # Allow all origins (*)
 
 api = Api(musicChat_api)
+
+# Function to censor inappropriate words
+def censor_message(text):
+    banned_words = ["inappropriate"]
+    words = text.split()
+    censored_text = " ".join(["***" if word.lower() in banned_words else word for word in words])
+    return censored_text
 
 # API endpoint to send a message
 @musicChat_api.route('/chat', methods=['POST'])
@@ -24,7 +32,11 @@ def send_message():
         chat = MusicChat(message=message, user_id=user_id)
         chat.create()
 
-        return jsonify({"message": "Message sent successfully"}), 200
+        return jsonify({
+            "message": "Message sent successfully",
+            "original_message": message,
+            "censored_message": censor_message(message),
+        }), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -54,7 +66,25 @@ def get_chat(chat_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# API endpoint to fetch chat history between two users
+# API endpoint to delete a message
+@musicChat_api.route('/chat/<int:chat_id>', methods=['DELETE'])
+def delete_message(chat_id):
+    try:
+        # Fetch the specific chat record by ID
+        chat = MusicChat.query.get(chat_id)
+        if not chat:
+            return jsonify({"message": "Chat not found"}), 404
+
+        # Delete the chat record
+        db.session.delete(chat)
+        db.session.commit()
+
+        return jsonify({"message": "Message deleted successfully"}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# API endpoint to get chat history between two users
 @musicChat_api.route('/chat_history/<int:user1>/<int:user2>', methods=['GET'])
 def get_chat_history(user1, user2):
     try:
@@ -84,8 +114,8 @@ def edit_message(chat_id):
         if not chat:
             return jsonify({"message": "Chat not found"}), 404
 
-        # Update the message content
-        chat.message = data["message"]
+        # Censor and update the message content
+        chat.message = censor_message(data["message"])
         db.session.commit()
 
         return jsonify({"message": "Message updated successfully"}), 200
@@ -93,26 +123,6 @@ def edit_message(chat_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# API endpoint to delete a message
-@musicChat_api.route('/chat/<int:chat_id>', methods=['DELETE'])
-def delete_message(chat_id):
-    try:
-        # Fetch the specific chat record by ID
-        chat = MusicChat.query.get(chat_id)
-        if not chat:
-            return jsonify({"message": "Chat not found"}), 404
-
-        # Delete the chat record
-        db.session.delete(chat)
-        db.session.commit()
-
-        return jsonify({"message": "Message deleted successfully"}), 200
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-# Register the Blueprint
-
-# app.register_blueprint(musicChat_api)
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port="8887")

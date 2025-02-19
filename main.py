@@ -28,7 +28,7 @@ from api.messages_api import messages_api # Adi added this, messages for his web
 from api.carphoto import car_api
 from api.carChat import car_chat_api
 from api.student import student_api
-from api.usermatching import usermatching_api # Justin added this, custom format for his website
+# from api.usermatching import usermatching_api # Justin added this, custom format for his website
 
 
 from api.artrec import artrec_api
@@ -76,10 +76,11 @@ app.register_blueprint(car_api)
 app.register_blueprint(student_api)
 app.register_blueprint(artrec_api)
 
-app.register_blueprint(musicChat_api)
+app.register_blueprint(musicChat_api, url_prefix='/api/unique_musicChat')
 app.register_blueprint(information_api)
 app.register_blueprint(profile_api)
-app.register_blueprint(usermatching_api)
+print("REGISTERED PROFILE BLUEPRINT")
+# app.register_blueprint(usermatching_api)
 
 # Tell Flask-Login the view function name of your login route
 login_manager.login_view = "login"
@@ -217,6 +218,7 @@ def extract_data():
         data['artinfo'] = [artist.read() for artist in ArtInfo.query.all()]
         data['musicChat'] = [chat.read() for chat in MusicChat.query.all()]
         data['musicpref'] = [user.read() for user in MusicPref.query.all()]
+        data['censor'] = [censor.read() for censor in Censor.query.all()]
     return data
 
 # Save extracted data to JSON files
@@ -246,6 +248,7 @@ def restore_data(data):
         _ = Post.restore(data['posts'])
         _ = ArtInfo.restore(data['artinfo'])
         _ = MusicChat.restore(data['musicChats'])
+        _ = Censor.restore(data['censor'])
     print("Data restored to the new database.")
 
 # Define a command to backup data
@@ -268,27 +271,4 @@ app.cli.add_command(custom_cli)
 if __name__ == "__main__":
     # change name for testing
     app.run(debug=True, host="0.0.0.0", port="8887")
-
-'''@app.route('/api/user-status', methods=['POST'])
-def store_user_status():
-    # Parse JSON data from request body
-    data = request.get_json()
-
-    # Validate that required fields exist in the incoming JSON
-    if not all(key in data for key in ["username", "decision"]):
-        return jsonify({"error": "Missing 'username' or 'decision' field"}), 400
-
-    # Add the data to the simulated database
-    user_status_db.append({
-        "username": data["username"],
-        "decision": data["decision"]  # 'approved' or 'rejected'
-    })
-
-    return jsonify({"message": "Decision stored successfully!", "data": user_status_db}), 200
-
-# Route to retrieve all user decisions
-@app.route('/api/user-status', methods=['GET'])
-def get_user_status():
-    jsonify(user_status_db) '''
-
 

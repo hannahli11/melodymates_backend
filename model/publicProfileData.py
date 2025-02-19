@@ -79,6 +79,7 @@ class PublicProfile(db.Model, UserMixin):
         """Add this user object to the database"""
         db.session.add(self)
         db.session.commit()
+        return self
         
     def read(self):
         """

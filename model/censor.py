@@ -210,3 +210,4 @@ def initCensor():
             except IntegrityError:
                 '''fails with bad or duplicate data'''
                 db.session.remove()
+

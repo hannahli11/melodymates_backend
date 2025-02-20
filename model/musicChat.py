@@ -3,16 +3,6 @@ from __init__ import app, db
 from model.user import User
 
 class MusicChat(db.Model):
-    """
-    MusicChat Model
-
-    Represents a music chat message.
-    
-    Attributes:
-        id (db.Column): The primary key, an integer.
-        _message (db.Column): A string representing the message content.
-        _user_id (db.Column): A foreign key referencing the user ID.
-    """
     __tablename__ = 'musicChats'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -20,52 +10,25 @@ class MusicChat(db.Model):
     _user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __init__(self, message, user_id):
-        """
-        Constructor to initialize a MusicChat object.
-        
-        Args:
-            message (str): The message content.
-            user_id (int): The user ID of the sender.
-        """
         self._message = message
         self._user_id = user_id
 
-    def __repr__(self):
-        """
-        String representation of the object.
-        
-        Returns:
-            str: The string representation of the object.
-        """
-        return f"MusicChat(id={self.id}, message='{self._message}', user_id={self._user_id})"
-
     def create(self):
-        """
-        Adds the object to the database and commits the transaction.
-        
-        Raises:
-            Exception: An error occurred when adding the object to the database.
-        """
         try:
             db.session.add(self)
             db.session.commit()
+            return self
         except Exception as e:
             db.session.rollback()
             raise e
 
     def read(self):
-        """
-        Retrieves the object data and returns it as a dictionary.
-        
-        Returns:
-            dict: A dictionary containing the music chat data.
-        """
         return {
             'id': self.id,
             'message': self._message,
-            'user_id': self._user_id,
+            'user_id': self._user_id
         }
-    
+
 
 def initMusicChats():
     """

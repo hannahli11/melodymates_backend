@@ -76,7 +76,7 @@ app.register_blueprint(car_api)
 app.register_blueprint(student_api)
 app.register_blueprint(artrec_api)
 
-app.register_blueprint(musicChat_api, url_prefix='/api/unique_musicChat')
+app.register_blueprint(musicChat_api)
 app.register_blueprint(information_api)
 app.register_blueprint(profile_api)
 print("REGISTERED PROFILE BLUEPRINT")
@@ -270,5 +270,5 @@ app.cli.add_command(custom_cli)
 # this runs the flask application on the development server
 if __name__ == "__main__":
     # change name for testing
-    app.run(debug=True, host="0.0.0.0", port="8887")
+    app.run(debug=True, host="0.0.0.0", port="8404")
 

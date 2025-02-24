@@ -13,6 +13,7 @@ class ArtInfo(db.Model, UserMixin):
     _uid = db.Column(db.String(255), unique=True, nullable=False)  # User's unique identifier
     _favorites = db.Column(db.JSON, nullable=True)  # JSON column to store favorite artists
 
+
     def __init__(self, name, uid, favorites=None):
         self._name = name
         self._uid = uid
@@ -43,6 +44,14 @@ class ArtInfo(db.Model, UserMixin):
             db.session.commit()
             return True
         return False
+    
+    @property
+    def genres(self):
+        return self._genres
+
+    @genres.setter
+    def genres(self, genres):
+        self._genres = genres
 
     def create(self):
         # Check if user already exists

@@ -121,21 +121,19 @@ class ArtInfoResource(Resource):
 
     
     def get(self):
-        """
-        Retrieves all artist records from the database.
-        """
-        artists = ArtInfo.query.all()  # Fetch all records
-
-        if not artists:
-            return {'message': 'No artist records found'}, 404
-            
-            # Prepare a list of dictionaries
-        json_ready = []
-        for artist in artists:
-            artist_data = artist.read()
-            json_ready.append(artist_data)
-
-        return jsonify(json_ready) 
+        # Check if a UID query parameter is provided
+        uid = request.args.get('uid')
+        if uid:
+            artist = ArtInfo.query.filter_by(_uid=uid).first()
+            if not artist:
+                return {'message': f'Artist with UID {uid} not found'}, 404
+            return jsonify(artist.read())
+        else:
+            artists = ArtInfo.query.all()
+            if not artists:
+                return {'message': 'No artist records found'}, 404
+            json_ready = [artist.read() for artist in artists]
+            return jsonify(json_ready)
         
     def put(self):
         """

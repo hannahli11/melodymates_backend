@@ -160,6 +160,34 @@ class Censor(db.Model, UserMixin):
         except IntegrityError:
             db.session.rollback()
         return None
+    
+    @classmethod
+    def restore(cls, data):
+        """Restores a list of censored submissions into the database."""
+        for item in data:
+            try:
+                # Check if an entry with the same UID already exists
+                existing_entry = cls.query.filter_by(uid=item["uid"]).first()
+                if existing_entry:
+                    print(f"Duplicate entry found for UID: {item['uid']}. Skipping...")
+                    continue  # Skip inserting this entry if it already exists
+
+                # If no existing entry, create and add the new censor entry
+                censor_entry = cls(
+                    name=item["name"],
+                    uid=item["uid"],
+                    submission_text=item.get("submission_text", ""),
+                    censored_text=item.get("censored_text", ""),
+                    flagged_words=item.get("flagged_words", ""),
+                    submission_date=datetime.strptime(item["submission_date"], "%Y-%m-%d").date() if "submission_date" in item else date.today()
+                )
+                db.session.add(censor_entry)
+
+            except IntegrityError:
+                db.session.rollback()
+                print(f"Error inserting entry with UID {item['uid']}: IntegrityError")
+        
+        db.session.commit()
 
 def initCensor():
 

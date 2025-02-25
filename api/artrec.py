@@ -4,9 +4,9 @@ from flask_cors import CORS
 
 from model.artInfo import ArtInfo 
 
-artrec_api = Blueprint('artrec_api', __name__, url_prefix='/api')
-# app = Flask(__name__)
-# CORS(app, supports_credentials=True, origins='*')  
+artrec_api = Blueprint('artrec_api', __name__, url_prefix='/api') 
+app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "http://127.0.0.1:4887"}})
 # API docs https://flask-restful.readthedocs.io/en/latest/
 api = Api(artrec_api)
 
@@ -89,6 +89,18 @@ class CarsonResource(Resource):
             return jsonify(user)
         return {"Data not found"}, 404
       
+class RecommendationResource(Resource):
+    def get(self):
+        uid = request.args.get('uid')
+        if not uid:
+            return {"message": "UID is required"}, 400
+
+        # Find user by UID
+        user = next((u for u in ArtrecAPI.users.values() if u["Username"] == uid), None)
+        if not user:
+            return {"message": f"No recommendations found for {uid}"}, 404
+
+        return jsonify(user["ArtistRecommendation"])
 class ArtInfoResource(Resource):
     def post(self):  # Debug log
         body = request.get_json()
@@ -209,6 +221,7 @@ api.add_resource(RowanResource, '/user/Rowan')
 api.add_resource(CarsonResource, '/user/Carson')
 api.add_resource(BrandonResource, '/user/Brandon')
 api.add_resource(ArtInfoResource, '/artinfo')  # POST, GET, PUT, DELETE for /api/artinfo
+api.add_resource(RecommendationResource, '/recommendations')
 
 
 

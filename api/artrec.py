@@ -6,7 +6,7 @@ from model.artInfo import ArtInfo
 
 artrec_api = Blueprint('artrec_api', __name__, url_prefix='/api') 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://127.0.0.1:8404"}})
+CORS(app, resources={r"/*": {"origins": ["http://127.0.0.1:8404", "https://melodymates.stu.nighthawkcodingsociety.com"]}})
 # API docs https://flask-restful.readthedocs.io/en/latest/
 api = Api(artrec_api)
 
@@ -234,7 +234,7 @@ class ArtInfoResource(Resource):
 
       
 # Building REST API endpoint
-''''
+'''
 api.add_resource(HannahResource, '/user/Hannah')
 api.add_resource(RheaResource, '/user/Rhea')
 api.add_resource(GaheeraResource, '/user/Gaheera')

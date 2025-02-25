@@ -120,6 +120,27 @@ class ArtInfoResource(Resource):
                 return {'message': f'Processed {name}'}, 400
         return jsonify(artist.read())
 
+    def get_recommended_artists(self, favorites):
+        # Sample recommendations based on favorite artists
+        recommendations = {
+            "Gracie Abrams": ["Olivia Rodrigo", "Chloe Moriondo", "Maisie Peters"],
+            "Don Toliver": ["Travis Scott", "Lil Uzi Vert", "Kid Cudi"],
+            "Ariana Grande": ["Demi Lovato", "Beyoncé", "Rihanna"],
+            "The Weeknd": ["Drake", "Post Malone", "Travis Scott"],
+            "Bob Marley": ["Peter Tosh", "Jimmy Cliff", "Burning Spear"]            # Add more mappings as necessary
+        }
+        
+        # Start with an empty list for recommendations
+        recommended_artists = []
+        
+        # Loop through each favorite artist and fetch recommendations
+        for artist in favorites:
+            if artist in recommendations:
+                recommended_artists.extend(recommendations[artist])
+        
+        # Remove duplicates and return the list
+        return list(set(recommended_artists))[:5]  # Limit to 5 artists
+
     
     def get(self):
         # Check if a UID query parameter is provided
@@ -128,14 +149,24 @@ class ArtInfoResource(Resource):
             artist = ArtInfo.query.filter_by(_uid=uid).first()
             if not artist:
                 return {'message': f'Artist with UID {uid} not found'}, 404
-            return jsonify(artist.read())
+            
+            # Fetch recommended artists based on their favorite artists
+            recommended_artists = self.get_recommended_artists(artist.favorites)
+            artist_data = artist.read()
+            artist_data['recommended_artists'] = recommended_artists  # Add the recommendations
+            
+            return jsonify(artist_data)
         else:
             artists = ArtInfo.query.all()
             if not artists:
                 return {'message': 'No artist records found'}, 404
-            json_ready = [artist.read() for artist in artists]
+            json_ready = []
+            for artist in artists:
+                recommended_artists = self.get_recommended_artists(artist.favorites)
+                artist_data = artist.read()
+                artist_data['recommended_artists'] = recommended_artists
+                json_ready.append(artist_data)
             return jsonify(json_ready)
-        
     def put(self):
         """
         Update artist details.
@@ -202,14 +233,16 @@ class ArtInfoResource(Resource):
 
 
       
-# # Building REST API endpoint
-# api.add_resource(HannahResource, '/user/Hannah')
-# api.add_resource(RheaResource, '/user/Rhea')
-# api.add_resource(GaheeraResource, '/user/Gaheera')
-# api.add_resource(RowanResource, '/user/Rowan')
-# api.add_resource(CarsonResource, '/user/Carson')
-# api.add_resource(BrandonResource, '/user/Brandon')
-# api.add_resource(ArtInfoResource, '/artinfo')  # POST, GET, PUT, DELETE for /api/artinfo
+# Building REST API endpoint
+''''
+api.add_resource(HannahResource, '/user/Hannah')
+api.add_resource(RheaResource, '/user/Rhea')
+api.add_resource(GaheeraResource, '/user/Gaheera')
+api.add_resource(RowanResource, '/user/Rowan')
+api.add_resource(CarsonResource, '/user/Carson')
+api.add_resource(BrandonResource, '/user/Brandon')'
+'''
+api.add_resource(ArtInfoResource, '/artinfo')  # POST, GET, PUT, DELETE for /api/artinfo
 
 
 

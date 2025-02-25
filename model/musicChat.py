@@ -28,7 +28,17 @@ class MusicChat(db.Model):
             'message': self._message,
             'user_id': self._user_id
         }
-
+    @classmethod
+    def restore(cls, data):
+        """Restores a list of music chat messages into the database."""
+        for item in data:
+            try:
+                mc = cls(message=item['message'], user_id=item['user_id'])
+                db.session.add(mc)
+            except IntegrityError:
+                db.session.rollback()
+                print(f"Skipping duplicate entry: {item}")
+        db.session.commit()
 
 def initMusicChats():
     """

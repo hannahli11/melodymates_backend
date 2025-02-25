@@ -8,6 +8,7 @@ from flask.cli import AppGroup
 from flask_login import current_user, login_required
 from flask import current_app
 from werkzeug.security import generate_password_hash
+from datetime import date
 import shutil
 
 
@@ -220,20 +221,23 @@ def extract_data():
         data['musicpref'] = [user.read() for user in MusicPref.query.all()]
         data['censor'] = [censor.read() for censor in Censor.query.all()]
     return data
+class CustomEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, date):
+            return obj.isoformat()  # Convert date to string format YYYY-MM-DD
+        return super().default(obj)
 
-# Save extracted data to JSON files
 def save_data_to_json(data, directory='backup'):
     if not os.path.exists(directory):
         os.makedirs(directory)
     for table, records in data.items():
         with open(os.path.join(directory, f'{table}.json'), 'w') as f:
-            json.dump(records, f)
+            json.dump(records, f, cls=CustomEncoder)  # Use custom encoder
     print(f"Data backed up to {directory} directory.")
-
 # Load data from JSON files
 def load_data_from_json(directory='backup'):
     data = {}
-    for table in ['users', 'musicChats', 'sections', 'groups', 'channels', 'posts', 'artinfo']:
+    for table in ['users', 'musicChats', 'sections', 'groups', 'channels', 'posts', 'artinfo', 'censor']:
         with open(os.path.join(directory, f'{table}.json'), 'r') as f:
             data[table] = json.load(f)
     return data

@@ -3,8 +3,8 @@ services:
         web:
                 image: melody_mates
                 build: .
-                # env_file:
-                #         - .env # This file is optional; defaults will be used if it does not exist
+                env_file:
+                         - .env # This file is optional; defaults will be used if it does not exist
                 ports:
                         - "8404:8404"
                 volumes:

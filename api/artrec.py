@@ -1,16 +1,15 @@
 from flask import Blueprint, jsonify, Flask, request
 from flask_restful import Api, Resource # used for REST API building
-from flask_cors import CORS
+# from flask_cors import CORS
 
 from model.artInfo import ArtInfo 
 
 artrec_api = Blueprint('artrec_api', __name__, url_prefix='/api') 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["http://127.0.0.1:8404", "https://melodymates.stu.nighthawkcodingsociety.com"]}})
+# CORS(app, supports_credentials=True, origins='*')
 # API docs https://flask-restful.readthedocs.io/en/latest/
 api = Api(artrec_api)
 
-'''
 class ArtrecAPI:
    # @app.route('/api/student/')
     def get_user(name):
@@ -87,8 +86,7 @@ class CarsonResource(Resource):
         user = ArtrecAPI.get_user("Carson")
         if user:
             return jsonify(user)
-        return {"Data not found"}, 404
-'''    
+        return {"Data not found"}, 404  
 
 class ArtInfoResource(Resource):
     def post(self):  # Debug log
@@ -234,16 +232,14 @@ class ArtInfoResource(Resource):
 
       
 # Building REST API endpoint
-api.add_resource(ArtInfoResource, '/artinfo')
-'''
+api.add_resource(ArtInfoResource, '/artinfo') # POST, GET, PUT, DELETE for /api/artinfo
 api.add_resource(HannahResource, '/user/Hannah')
 api.add_resource(RheaResource, '/user/Rhea')
 api.add_resource(GaheeraResource, '/user/Gaheera')
 api.add_resource(RowanResource, '/user/Rowan')
 api.add_resource(CarsonResource, '/user/Carson')
-api.add_resource(BrandonResource, '/user/Brandon')'
-'''
-  # POST, GET, PUT, DELETE for /api/artinfo
+api.add_resource(BrandonResource, '/user/Brandon')
+
 
 
 

@@ -125,7 +125,10 @@ class ArtInfoResource(Resource):
             "Don Toliver": ["Travis Scott", "Lil Uzi Vert", "Kid Cudi"],
             "Ariana Grande": ["Demi Lovato", "Beyoncé", "Rihanna"],
             "The Weeknd": ["Drake", "Post Malone", "Travis Scott"],
-            "Bob Marley": ["Peter Tosh", "Jimmy Cliff", "Burning Spear"]            # Add more mappings as necessary
+            "Bob Marley": ["Peter Tosh", "Jimmy Cliff", "Burning Spear"],
+            "Olivia Rodrigo": ["Tate Mcrae", "Willow", "Conan Gray"],
+            "Sabrina Carpenter": ["Madison Beer", "Chappell Roan", "Gracie Abrams"], 
+            "Taylor Swift": ["Carly Rae Jepsen", "Halsey", "Dua Lipa"]           # Add more mappings as necessary
         }
         
         # Start with an empty list for recommendations

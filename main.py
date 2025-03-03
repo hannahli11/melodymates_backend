@@ -40,20 +40,18 @@ from api.public_profile import profile_api
 
 from api.vote import vote_api
 # database Initialization functions
-from model.carChat import CarChat
 from model.user import User, initUsers
 from model.section import Section, initSections
 from model.group import Group, initGroups
-from model.channel import Channel, initChannels
+from model.channel import Channel
 from model.post import Post, initPosts
 from model.musicChat import MusicChat, initMusicChats
-from model.nestPost import NestPost, initNestPosts # Justin added this, custom format for his website
-from model.vote import Vote, initVotes
+from model.nestPost import initNestPosts # Justin added this, custom format for his website
 from model.artInfo import ArtInfo, initArtinfo
 from model.musicpref import MusicPref, initMusicPref
 from model.censor import Censor, initCensor
-from model.publicProfileData import PublicProfile, initPublicProfile
-# from model.UserMatch import UserMatch, initUserMatch
+from model.publicProfileData import initPublicProfile
+from model.UserMatch import initUserMatch, UserMatch
 
 # server only Views
 
@@ -182,21 +180,20 @@ custom_cli = AppGroup('custom', help='Custom commands')
 # Define a command to run the data generation functions
 @custom_cli.command('generate_data')
 def generate_data():
+    initUserMatch()
     initArtinfo()
-    initUsers()
+    initUserMatch()
     initSections()
     initGroups()
     initPosts()
     initNestPosts()
-    initVotes()
+    # initVotes()  # Commented out because initVotes is not defined
     initArtinfo()
     initMusicPref()
     initMusicChats()
     initCensor()
     initPublicProfile()
     # initUserMatch() 
-    
-# Backup the old database
 def backup_database(db_uri, backup_uri):
     """Backup the current database."""
     if backup_uri:

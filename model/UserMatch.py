@@ -1,8 +1,8 @@
 from flask import current_app
 from sqlalchemy.exc import IntegrityError
-from usermanagement import db  # Import db from usermanagement
+from UserMatch import db  # Import db from usermanagement
 
-class User(db.Model):
+class usermanagement(db.Model):
     """
     SQLAlchemy model for storing user data with music preferences and bio.
     """
@@ -45,11 +45,11 @@ class User(db.Model):
 
     @staticmethod
     def get_user_by_name(name):
-        return User.query.filter_by(name=name).first()
+        return usermanagement.query.filter_by(name=name).first()
 
     @staticmethod
     def get_all_users():
-        return [user.read() for user in User.query.all()]
+        return [usermanagement.read() for user in User.query.all()]
 
 # Function to initialize the database with static data
 def init_users():
